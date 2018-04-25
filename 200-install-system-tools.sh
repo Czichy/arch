@@ -1,10 +1,10 @@
 #!/bin/bash
-#if [[ -f `pwd`/sharedfuncs ]]; then
-#  source sharedfuncs
-#else
-#  echo "missing file: sharedfuncs"
-#  exit 1
-#fi
+if [[ -f `pwd`/sharedfuncs ]]; then
+  source sharedfuncs
+else
+  echo "missing file: sharedfuncs"
+  exit 1
+fi
 
 #SYSTEM TOOLS {{{
 install_system_apps(){
@@ -53,40 +53,25 @@ install_system_apps(){
           system_ctl enable netdata.service
         package_install "nload"
         package_install "gnome-logs"
-        package_install "qjournalctl"
+        package_install "gnome-disk-utility"
+        package_install "polkit-gnome"
+	      package_install "qjournalctl"
         package_install "pacmanlogviewer"
         package_install "seahorse"
         package_install "thunar"
         package_install "termite"
         package_install "thunar-archive-plugin"
         package_install "thunar-volman"
-    
+
         #sh AUR/install-caffeine-ng-v*.sh
         aur_package_install "conky-lua-archers"
         aur_package_install "cool-retro-term"
         aur_package_install "discord"
         aur_package_install "mintstick-git"
         aur_package_install "temps"
-    
-        aur_package_install "arc-gtk-theme-git"
-        aur_package_install "conky-aureola"
-        aur_package_install "downgrade"
-        aur_package_install "inxi"
-        aur_package_install "neofetch"
-        aur_package_install "numix-circle-icon-theme-git"
-        aur_package_install "pamac-aur"
-        aur_package_install "paper-icon-theme-git"
-        aur_package_install "papirus-icon-theme-git"
-        aur_package_install "sardi-icons"
-        aur_package_install "sardi-extra-icons"
-        aur_package_install "screenkey"
-        aur_package_install "surfn-icons-git"
 
-        aur_package_install "ttf-font-awesome"
-        aur_package_install "ttf-mac-fonts"
-        aur_package_install "virtualbox-for-linux-kernel"
-        aur_package_install "xcursor-breeze"
-    
+
+
 
     echo "################################################################"
     echo "####    Software from Arch Linux Repository installed     ######"

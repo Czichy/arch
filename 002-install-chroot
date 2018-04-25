@@ -18,20 +18,21 @@
 #-------------------------------------------------------------------------------
 # Run this script after your first boot with archlinux (as root)
 
-if [[ -f `pwd`/sharedfuncs ]]; then
-  source sharedfuncs
+if [[ -f `pwd`/sharedfuncs.sh ]]; then
+  source sharedfuncs.sh
 else
   echo "missing file: sharedfuncs"
   exit 1
 fi
 
-load_script "100-display-manager-and-desktop"
-load_script "110-install-sound"
-load_script "130-install-printers"
-load_script "140-install-samba"
-load_script "200-install-system-tools"
-load_script "600-install-Arco"
-load_script "700-installing-fonts"
+load_script "100-display-manager-and-desktop.sh"
+load_script "110-install-sound.sh"
+load_script "130-install-printers.sh"
+load_script "140-install-samba.sh"
+load_script "200-install-system-tools.sh"
+load_script "300-install-themes-icons.sh"
+load_script "600-install-Arco.sh"
+load_script "700-install-fonts.sh"
 
 #ARCHLINUX U INSTALL {{{
 #1 - WELCOME {{{
@@ -653,7 +654,8 @@ install_development_apps(){
          aur_package_install "qtwebkit-bin"
          package_install "atom"
          package_install "emacs"
-         package_remove "vim"
+#         package_remove "vim"
+	 package_install "geany"
          package_install "gvim ctags"
          package_install "meld"
          aur_package_install "sublime-text2"
@@ -808,7 +810,7 @@ install_audio_apps(){
                   echo -e 'soundfont /usr/share/soundfonts/fluidr3/FluidR3GM.SF2' >> /etc/timidity++/timidity.cfg
                   aur_package_install "tomahawk"
                   package_install "quodlibet"
-                  
+
 }
 #}}}
 #VIDEO {{{
@@ -826,7 +828,7 @@ install_video_apps(){
                   package_install "kodi"
                   add_user_to_group ${username} kodi
                   package_install "obs-studio-git"
-            
+
 }
 #}}}
 #WEBSERVER {{{
@@ -966,19 +968,19 @@ install_web_server(){
 #}}}
 #IME INPUT TOOLS {{{
 choose_ime_m17n(){
-  while true	
-  do	
+  while true
+  do
     print_title "M17n based IME - Input scripts (such as the Indic ones) using m17n maps - https://wiki.archlinux.org/index.php/Internationalization"
-    echo " 1) $(menu_item "fcitx")"	
-    echo " 2) $(menu_item "ibus")"	
-    echo ""	
-    echo " b) BACK"	
-    echo ""	
+    echo " 1) $(menu_item "fcitx")"
+    echo " 2) $(menu_item "ibus")"
+    echo ""
+    echo " b) BACK"
+    echo ""
     IME_OPTIONS+=" b"
     read_input_options "IME_OPTIONS"
-    for OPT in ${OPTIONS[@]}; do	
-      case "$OPT" in	
-        1)	
+    for OPT in ${OPTIONS[@]}; do
+      case "$OPT" in
+        1)
           package_install "fcitx"
           package_install "fcitx-m17n"
           package_install "fcitx-qt4"
@@ -990,23 +992,23 @@ choose_ime_m17n(){
           echo -e '#!/bin/sh\n\n\n# Identify fcitx as a input module for both GTK and QT apps\nXMODIFIERS=@im=fcitx\nGTK_IM_MODULE=fcitx\nQT_IM_MODULE=fcitx\n\nexport XMODIFIERS GTK_IM_MODULE QT_IM_MODULE\necho we set XMODIFIERS GTK_IM_MODULE QT_IM_MODULE in profile.d\n' > /etc/profile.d/ime.sh
           # echo -e '#!/bin/sh\n\n\n# Identify fcitx as a input module for both GTK and QT apps\nXMODIFIERS=@im=fcitx\nGTK_IM_MODULE=fcitx\nQT_IM_MODULE=fcitx\n\nexport XMODIFIERS GTK_IM_MODULE QT_IM_MODULE\necho we set XMODIFIERS GTK_IM_MODULE QT_IM_MODULE in xprofile\n' > /etc/xprofile
           ;;
-        2)	
+        2)
           package_install "ibus"
           package_install "ibus-m17n"
           package_install "ibus-qt"
           echo -e '#!/bin/sh\n\n\n# Identify ibus as a input module for both GTK and QT apps\nXMODIFIERS=@im=ibus\nGTK_IM_MODULE=ibus\nQT_IM_MODULE=ibus\n\nexport XMODIFIERS GTK_IM_MODULE QT_IM_MODULE\necho we set XMODIFIERS GTK_IM_MODULE QT_IM_MODULE in profile.d\n' > /etc/profile.d/ime.sh
           ;;
         "b")
-          break	
-          ;;	
-        *)	
-          invalid_option	
-          ;;	
-      esac	
-    done	
-    source sharedfuncs_elihw	
-  done	
-}	
+          break
+          ;;
+        *)
+          invalid_option
+          ;;
+      esac
+    done
+    source sharedfuncs_elihw
+  done
+}
 #}}}
 #CLEAN ORPHAN PACKAGES {{{
 clean_orphan_packages(){
@@ -1153,9 +1155,9 @@ choose_aurhelper
 
         install_video_apps
         checklist[10]=1
-        
+
+        install_themes
         install_arcolinux
-        install_fonts
         checklist[11]=1
 
         choose_ime_m17n
