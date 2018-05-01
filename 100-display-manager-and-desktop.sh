@@ -49,16 +49,17 @@ set -e
             package_install "zathura"
             package_install "speedtest-cli"
             aur_package_install "yad"
+	    aur_package_install "skippy-xd-git"
   } #}}}
 
 install_display_manager() { #{{{
       print_title "DISPLAY MANAGER - https://wiki.archlinux.org/index.php/Display_Manager"
       print_info "A display manager, or login manager, is a graphical interface screen that is displayed at the end of the boot process in place of the default shell."
 
-      package_install "lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings"
+      #package_install "lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings"
       #system_ctl enable lightdm
-      sudo systemctl enable lightdm.service -f
-      sudo systemctl set-default graphical.target
+      #sudo systemctl enable lightdm.service -f
+      #sudo systemctl set-default graphical.target
 
 
 
@@ -99,7 +100,7 @@ install_display_manager() { #{{{
       aur_package_install "openbox-arc-git"
       aur_package_install "perl-linux-desktopfiles"
       install_misc_apps "OPENBOX"
-      
+
       #}}}
   #COMMON PKGS {{{
     #MTP SUPPORT {{{

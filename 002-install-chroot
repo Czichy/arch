@@ -21,16 +21,17 @@
 if [[ -f `pwd`/sharedfuncs.sh ]]; then
   source sharedfuncs.sh
 else
-  echo "missing file: sharedfuncs"
+  echo "missing file: sharedfuncs.sh"
   exit 1
 fi
-
+load_script "000-use-all-cores-makepkg-conf.sh"
 load_script "100-display-manager-and-desktop.sh"
 load_script "110-install-sound.sh"
 load_script "130-install-printers.sh"
 load_script "140-install-samba.sh"
 load_script "200-install-system-tools.sh"
 load_script "300-install-themes-icons.sh"
+load_script "400-install-cloud-storage.sh"
 load_script "600-install-Arco.sh"
 load_script "700-install-fonts.sh"
 
@@ -260,8 +261,9 @@ choose_aurhelper(){
   print_title "AUR HELPER - https://wiki.archlinux.org/index.php/AUR_Helpers"
   print_info "AUR Helpers are written to make using the Arch User Repository more comfortable."
   print_warning "\tNone of these tools are officially supported by Arch devs."
-          print_title "YAOURT - https://wiki.archlinux.org/index.php/Yaourt"
+        print_title "YAOURT - https://wiki.archlinux.org/index.php/Yaourt"
         print_info "Yaourt (Yet AnOther User Repository Tool) is a community-contributed wrapper for pacman which adds seamless access to the AUR, allowing and automating package compilation and installation from your choice of the thousands of PKGBUILDs in the AUR, in addition to the many thousands of available Arch Linux binary packages."
+        use_all_cores
         if ! is_package_installed "yaourt" ; then
           package_install "base-devel yajl namcap"
           pacman -D --asdeps yajl namcap
@@ -655,17 +657,17 @@ install_development_apps(){
          package_install "atom"
          package_install "emacs"
 #         package_remove "vim"
-	 package_install "geany"
+	       # package_install "geany"
          package_install "gvim ctags"
          package_install "meld"
-         aur_package_install "sublime-text2"
-         aur_package_install "sublime-text-dev"
-         aur_package_install "android-sdk android-sdk-platform-tools android-sdk-build-tools android-platform"
-          add_user_to_group ${username} sdkusers
-          chown -R :sdkusers /opt/android-sdk/
-          chmod -R g+w /opt/android-sdk/
-          add_line "export ANDROID_HOME=/opt/android-sdk" "/home/${username}/.bashrc"
-          aur_package_install "android-studio"
+         # aur_package_install "sublime-text2"
+         # aur_package_install "sublime-text-dev"
+         # aur_package_install "android-sdk android-sdk-platform-tools android-sdk-build-tools android-platform"
+         #  add_user_to_group ${username} sdkusers
+         #  chown -R :sdkusers /opt/android-sdk/
+         #  chmod -R g+w /opt/android-sdk/
+         #  add_line "export ANDROID_HOME=/opt/android-sdk" "/home/${username}/.bashrc"
+         #  aur_package_install "android-studio"
          package_install "intellij-idea-community-edition"
          #package_install "qtcreator"
          aur_package_install "mysql-workbench"
