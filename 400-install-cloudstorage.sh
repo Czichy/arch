@@ -8,11 +8,14 @@
 
 #CLOUD STORAGE {{{
 install_cloud_storage(){
-  package_install "curl sqlite dmd"
-  aur_package_install "onedrive-git"
+  sudo pacman -Sy --noconfirm dmd
+  yaourt -S onedrive-git
   systemctl --user enable onedrive
   systemctl --user start onedrive
-  package_install "java-openjfx"
-  aur_package_install "cryptomator"
+  onedrive
+  sudo pacman -Sy ..noconfirm java-openjfx
+  yaourt -S cryptomator
 }
 #}}}
+
+install_clod_storage

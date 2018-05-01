@@ -31,7 +31,7 @@ load_script "130-install-printers.sh"
 load_script "140-install-samba.sh"
 load_script "200-install-system-tools.sh"
 load_script "300-install-themes.sh"
-load_script "400-install-cloud-storage.sh"
+#load_script "400-install-cloud-storage.sh"
 load_script "600-install-Arco.sh"
 load_script "700-install-fonts.sh"
 
