@@ -77,5 +77,3 @@ install_arcolinux(){
     rm -rf ~/.local/share/applications
     }
 #}}}
-
-install_arcolinux
