@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 ##################################################################################################################
 #
 #   DO NOT JUST RUN THIS. EXAMINE AND JUDGE. RUN AT YOUR OWN RISK.
@@ -15,7 +14,7 @@ set -e
 install_cups(){
     print_title "CUPS - https://wiki.archlinux.org/index.php/Cups"
     print_info "CUPS is the standards-based, open source printing system developed by Apple Inc. for Mac OS X and other UNIX-like operating systems."
-  
+
     sudo pacman -S --noconfirm --needed cups cups-pdf
 
     #first try if you can print without footmatic

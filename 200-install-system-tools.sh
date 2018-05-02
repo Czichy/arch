@@ -73,13 +73,12 @@ install_system_apps(){
 
 	#install powerline
 	package_install "powerline powerline-fonts"
-	echo 
+	echo
 	"powerline-daemon -q
 	POWERLINE_BASH_CONTINUATION=1
 	POWERLINE_BASH_SELECT=1
-	. /usr/lib/python3.6/site-packages/powerline/bindings/bash/powerline.sh" > 
-~/.bashrc
-source ~/.bashrc
+	. /usr/lib/python3.6/site-packages/powerline/bindings/bash/powerline.sh" > ~/.bashrc
+  source ~/.bashrc
 
 
 
