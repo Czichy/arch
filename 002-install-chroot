@@ -677,7 +677,7 @@ install_development_apps(){
          #  aur_package_install "android-studio"
          package_install "intellij-idea-community-edition"
          #package_install "qtcreator"
-         aur_package_install "mysql-workbench"
+         #aur_package_install "mysql-workbench"
          #package_remove "jdk"
          #package_install "jdk8-openjdk"
          #package_remove "jdk"
@@ -697,23 +697,23 @@ install_development_apps(){
 #}}}
 #OFFICE {{{
 install_office_apps(){
-          if [[ ${KDE} -eq 1 ]]; then
-            package_install "calligra"
-          else
-            package_install "gnumeric abiword abiword-plugins"
-          fi
-          package_install "hunspell hunspell-$LOCALE_HS"
-          package_install "aspell aspell-$LOCALE_AS"
-          package_install "calibre"
-          package_install "gcstar"
-          aur_package_install "geeknote-git"
-          aur_package_install "haroopad"
-          #package_install "homebank"
-          package_install "impressive"
-          package_install "texlive-most"
-          if [[ ${KDE} -eq 0 ]]; then
-            package_install "gummi"
-          fi
+          # if [[ ${KDE} -eq 1 ]]; then
+          #   package_install "calligra"
+          # else
+          #   package_install "gnumeric abiword abiword-plugins"
+          # fi
+          # package_install "hunspell hunspell-$LOCALE_HS"
+          # package_install "aspell aspell-$LOCALE_AS"
+          # package_install "calibre"
+          # package_install "gcstar"
+          # aur_package_install "geeknote-git"
+          # aur_package_install "haroopad"
+          # #package_install "homebank"
+          # package_install "impressive"
+          # package_install "texlive-most"
+          # if [[ ${KDE} -eq 0 ]]; then
+          #   package_install "gummi"
+          # fi
           print_title "LIBREOFFICE - https://wiki.archlinux.org/index.php/LibreOffice"
           package_install "libreoffice-fresh"
           [[ $LOCALE != en_US ]] && package_install "libreoffice-fresh-$LOCALE_LO"
