@@ -187,15 +187,6 @@
       error_msg "ERROR! Domain name is not configured."
     fi
   } #}}}
-  load_script(){ #{{{
-	 if [[ -f `pwd`/$1 ]]; then
-	  source $1
-	else
-	  echo "missing file: $1"
-	  exit 1
-	fi
-  }
-  #}}}
   check_connection(){ #{{{
     XPINGS=$(( $XPINGS + 1 ))
     connection_test() {
