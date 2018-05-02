@@ -975,50 +975,6 @@ install_web_server(){
   esac
 }
 #}}}
-#IME INPUT TOOLS {{{
-choose_ime_m17n(){
-  while true
-  do
-    print_title "M17n based IME - Input scripts (such as the Indic ones) using m17n maps - https://wiki.archlinux.org/index.php/Internationalization"
-    echo " 1) $(menu_item "fcitx")"
-    echo " 2) $(menu_item "ibus")"
-    echo ""
-    echo " b) BACK"
-    echo ""
-    IME_OPTIONS+=" b"
-    read_input_options "IME_OPTIONS"
-    for OPT in ${OPTIONS[@]}; do
-      case "$OPT" in
-        1)
-          package_install "fcitx"
-          package_install "fcitx-m17n"
-          package_install "fcitx-qt4"
-          package_install "fcitx-qt5"
-          package_install "fcitx-gtk2"
-          package_install "fcitx-gtk3"
-          package_install "kcm-fcitx"
-          package_install "fcitx-configtool"
-          echo -e '#!/bin/sh\n\n\n# Identify fcitx as a input module for both GTK and QT apps\nXMODIFIERS=@im=fcitx\nGTK_IM_MODULE=fcitx\nQT_IM_MODULE=fcitx\n\nexport XMODIFIERS GTK_IM_MODULE QT_IM_MODULE\necho we set XMODIFIERS GTK_IM_MODULE QT_IM_MODULE in profile.d\n' > /etc/profile.d/ime.sh
-          # echo -e '#!/bin/sh\n\n\n# Identify fcitx as a input module for both GTK and QT apps\nXMODIFIERS=@im=fcitx\nGTK_IM_MODULE=fcitx\nQT_IM_MODULE=fcitx\n\nexport XMODIFIERS GTK_IM_MODULE QT_IM_MODULE\necho we set XMODIFIERS GTK_IM_MODULE QT_IM_MODULE in xprofile\n' > /etc/xprofile
-          ;;
-        2)
-          package_install "ibus"
-          package_install "ibus-m17n"
-          package_install "ibus-qt"
-          echo -e '#!/bin/sh\n\n\n# Identify ibus as a input module for both GTK and QT apps\nXMODIFIERS=@im=ibus\nGTK_IM_MODULE=ibus\nQT_IM_MODULE=ibus\n\nexport XMODIFIERS GTK_IM_MODULE QT_IM_MODULE\necho we set XMODIFIERS GTK_IM_MODULE QT_IM_MODULE in profile.d\n' > /etc/profile.d/ime.sh
-          ;;
-        "b")
-          break
-          ;;
-        *)
-          invalid_option
-          ;;
-      esac
-    done
-    source sharedfuncs_elihw
-  done
-}
-#}}}
 #CLEAN ORPHAN PACKAGES {{{
 clean_orphan_packages(){
   print_title "CLEAN ORPHAN PACKAGES"
@@ -1029,19 +985,7 @@ clean_orphan_packages(){
 #}}}
 #EXTRA {{{
 install_extra(){
-  while true
-  do
     print_title "EXTRA"
-    echo " 1) Global Menu $AUR"
-    echo " 2) $(menu_item "profile-sync-daemon") $AUR"
-    echo ""
-    echo " b) BACK"
-    echo ""
-    EXTRA_OPTIONS+=" b"
-    read_input_options "$EXTRA_OPTIONS"
-    for OPT in ${OPTIONS[@]}; do
-      case "$OPT" in
-        1)
           aur_package_install "gtk2-appmenu gtk3-appmenu"
           if [[ ${KDE} -eq 1 ]]; then
             aur_package_install "appmenu-qt appmenu-gtk"
@@ -1052,23 +996,10 @@ install_extra(){
           else
             add_line "gtk-shell-shows-menubar = 1" "/home/${username}/.config/gtk-3.0/settings.ini"
           fi
-          ;;
-        2)
           aur_package_install "profile-sync-daemon"
           run_as_user "psd"
           run_as_user "$EDITOR /home/${username}/.config/psd/psd.conf"
           run_as_user "systemctl --user enable psd.service"
-          ;;
-        "b")
-          break
-          ;;
-        *)
-          invalid_option
-          ;;
-      esac
-    done
-    source sharedfuncs_elihw
-  done
 }
 #}}}
 #FINISH {{{
@@ -1169,7 +1100,6 @@ choose_aurhelper
         install_arcolinux
         checklist[11]=1
 
-        choose_ime_m17n
         checklist[12]=1
 
         install_extra

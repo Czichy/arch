@@ -69,35 +69,35 @@ install_display_manager() { #{{{
       print_title "i3 - https://wiki.archlinux.org/index.php/I3"
       print_info "i3 is a dynamic tiling window manager inspired by wmii that is primarily targeted at developers and advanced users. The stated goals for i3 include clear documentation, proper multi-monitor support, a tree structure for windows, and different modes like in vim."
       sudo pacman -S --noconfirm --needed i3status
-      aur_pachage_install "i3-gaps-next-git"
+      aur_package_install "i3-gaps-next-git"
       package_install "rofi"
       # config xinitrc
       config_xinitrc "i3"
       # distro specific
-      aur_pachage_install "i3blocks"
+      aur_package_install "i3blocks"
       #}}}
    # 13)
       #OPENBOX {{{
-      print_title "OPENBOX - http://wiki.archlinux.org/index.php/Openbox"
-      print_info "Openbox is a lightweight and highly configurable window manager with extensive standards support."
-      package_install "obconf obmenu menumaker"
-      package_install "lxappearance"
-      package_install "leafpad epdfview nitrogen"
-      aur_package_install "openbox-patched"
-      mkdir -p /home/${username}/.config/openbox/
-      cp /etc/xdg/openbox/{menu.xml,rc.xml,autostart} /home/${username}/.config/openbox/
-      chown -R ${username}:users /home/${username}/.config
-      # config xinitrc
-      config_xinitrc "openbox-session"
-      # distro specific
-      package_install "gsimplecal"
-      package_install "oblogout"
-      aur_package_install "gtk2-perl"
-      aur_package_install "obkey"
-      aur_package_install "obmenu3"
-      aur_package_install "obmenu-generator"
-      aur_package_install "openbox-arc-git"
-      aur_package_install "perl-linux-desktopfiles"
+      # print_title "OPENBOX - http://wiki.archlinux.org/index.php/Openbox"
+      # print_info "Openbox is a lightweight and highly configurable window manager with extensive standards support."
+      # package_install "obconf obmenu menumaker"
+      # package_install "lxappearance"
+      # package_install "leafpad epdfview nitrogen"
+      # aur_package_install "openbox-patched"
+      # mkdir -p /home/${username}/.config/openbox/
+      # cp /etc/xdg/openbox/{menu.xml,rc.xml,autostart} /home/${username}/.config/openbox/
+      # chown -R ${username}:users /home/${username}/.config
+      # # config xinitrc
+      # config_xinitrc "openbox-session"
+      # # distro specific
+      # package_install "gsimplecal"
+      # package_install "oblogout"
+      # aur_package_install "gtk2-perl"
+      # aur_package_install "obkey"
+      # aur_package_install "obmenu3"
+      # aur_package_install "obmenu-generator"
+      # aur_package_install "openbox-arc-git"
+      # aur_package_install "perl-linux-desktopfiles"
       install_misc_apps "OPENBOX"
 
       #}}}
