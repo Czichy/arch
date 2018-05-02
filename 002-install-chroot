@@ -284,6 +284,8 @@ add_custom_repositories(){
     local _repo="arcolinux_repo"
     local _check_repo=`grep -F "${_repo}" /etc/pacman.conf`
     if [[ -z $_check_repo ]]; then
+      sudo pacman-key --keyserver hkps://hkps.pool.sks-keyservers.net:443 -r 74F5DE85A506BF64
+      sudo pacman-key --lsign-key 74F5DE85A506BF64
       echo '#[arcolinux_repo_testing]
       #SigLevel = Required DatabaseOptional
       #Server = https://arcolinux.github.io/arcolinux_repo_testing/$arch
@@ -291,6 +293,7 @@ add_custom_repositories(){
       SigLevel = Required DatabaseOptional
       Server = https://arcolinux.github.io/arcolinux_repo/$arch' | sudo tee --append /etc/pacman.conf
     fi
+    system_update
 }
 #}}}
 #BASIC SETUP {{{

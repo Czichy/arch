@@ -528,8 +528,7 @@
       if is_package_installed "${PKG}" ; then
         if [[ $AUTOMATIC_MODE -eq 1 || $VERBOSE_MODE -eq 0 ]]; then
           ncecho " ${BBlue}[${Reset}${Bold}X${BBlue}]${Reset} Removing ${Bold}${PKG}${Reset} "
-          pacman -Rcsn --noconfirm ${PKG} >>"$LOG" 2>&1 &
-          pid=$!;progress $pid
+          pacman -Rcsn --noconfirm ${PKG} >>"$LOG" 2>&1 & pid=$!;progress $pid
         else
          pacman -Rcsn ${PKG}
         fi
