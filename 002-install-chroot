@@ -281,12 +281,16 @@ choose_aurhelper(){
 #CUSTOM REPOSITORIES {{{
 add_custom_repositories(){
     print_title "CUSTOM REPOSITORIES - https://wiki.archlinux.org/index.php/Unofficial_User_Repositories"
-    echo '#[arcolinux_repo_testing]
-    #SigLevel = Required DatabaseOptional
-    #Server = https://arcolinux.github.io/arcolinux_repo_testing/$arch
-    [arcolinux_repo]
-    SigLevel = Required DatabaseOptional
-    Server = https://arcolinux.github.io/arcolinux_repo/$arch' | sudo tee --append /etc/pacman.conf
+    local _repo="arcolinux_repo"
+    local _check_repo=`grep -F "${_repo}" /etc/pacman.conf`
+    if [[ -z $_check_repo ]]; then
+      echo '#[arcolinux_repo_testing]
+      #SigLevel = Required DatabaseOptional
+      #Server = https://arcolinux.github.io/arcolinux_repo_testing/$arch
+      [arcolinux_repo]
+      SigLevel = Required DatabaseOptional
+      Server = https://arcolinux.github.io/arcolinux_repo/$arch' | sudo tee --append /etc/pacman.conf
+    fi
 }
 #}}}
 #BASIC SETUP {{{

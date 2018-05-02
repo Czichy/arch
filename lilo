@@ -270,31 +270,15 @@ choose_aurhelper(){
 #CUSTOM REPOSITORIES {{{
 add_custom_repositories(){
   print_title "CUSTOM REPOSITORIES - https://wiki.archlinux.org/index.php/Unofficial_User_Repositories"
-  read_input_text "Add custom repositories" $CUSTOMREPO
-  if [[ $OPTION == y ]]; then
-    while true
-    do
-      print_title "CUSTOM REPOSITORIES - https://wiki.archlinux.org/index.php/Unofficial_User_Repositories"
-      echo " 1) \"Add new repository\""
-      echo ""
-      echo " d) DONE"
-      echo ""
-      read -p "$prompt1" OPTION
-      case $OPTION in
-        1)
-          read -p "Repository Name [ex: custom]: " repository_name
-          read -p "Repository Address [ex: file:///media/backup/Archlinux]: " repository_addr
-          add_repository "${repository_name}" "${repository_addr}" "Never"
-          pause_function
-          ;;
-        "d")
-          break
-          ;;
-        *)
-          invalid_option
-          ;;
-      esac
-    done
+  local _repo="arcolinux_repo"
+  local _check_repo=`grep -F "${_repo}" /etc/pacman.conf`
+  if [[ -z $_check_repo ]]; then
+    echo '#[arcolinux_repo_testing]
+    #SigLevel = Required DatabaseOptional
+    #Server = https://arcolinux.github.io/arcolinux_repo_testing/$arch
+    [arcolinux_repo]
+    SigLevel = Required DatabaseOptional
+    Server = https://arcolinux.github.io/arcolinux_repo/$arch' | sudo tee --append /etc/pacman.conf
   fi
 }
 #}}}
@@ -397,32 +381,93 @@ install_samba(){
   print_info "Samba is a re-implementation of the SMB/CIFS networking protocol, it facilitates file and printer sharing among Linux and Windows systems as an alternative to NFS."
   read_input_text "Install Samba" $SAMBA
   if [[ $OPTION == y ]]; then
-    package_install "samba smbnetfs"
-    [[ ! -f /etc/samba/smb.conf ]] && cp /etc/samba/smb.conf.default /etc/samba/smb.conf
-    local CONFIG_SAMBA=`cat /etc/samba/smb.conf | grep usershare`
-    if [[ -z $CONFIG_SAMBA ]]; then
-      # configure usershare
-      export USERSHARES_DIR="/var/lib/samba/usershare"
-      export USERSHARES_GROUP="sambashare"
-      mkdir -p ${USERSHARES_DIR}
-      groupadd ${USERSHARES_GROUP}
-      chown root:${USERSHARES_GROUP} ${USERSHARES_DIR}
-      chmod 1770 ${USERSHARES_DIR}
-      sed -i -e '/\[global\]/a\\n   usershare path = /var/lib/samba/usershare\n   usershare max shares = 100\n   usershare allow guests = yes\n   usershare owner only = False' /etc/samba/smb.conf
-      sed -i -e '/\[global\]/a\\n   socket options = IPTOS_LOWDELAY TCP_NODELAY SO_KEEPALIVE\n   write cache size = 2097152\n   use sendfile = yes\n' /etc/samba/smb.conf
-      usermod -a -G ${USERSHARES_GROUP} ${username}
-      sed -i '/user_allow_other/s/^#//' /etc/fuse.conf
-      modprobe fuse
-    fi
-    echo "Enter your new samba account password:"
-    pdbedit -a -u ${username}
-    while [[ $? -ne 0 ]]; do
-      pdbedit -a -u ${username}
-    done
-    # enable services
-    system_ctl enable smbd
-    system_ctl enable nmbd
-    pause_function
+    sudo pacman -S --noconfirm --needed samba
+    sudo wget "https://git.samba.org/samba.git/?p=samba.git;a=blob_plain;f=examples/smb.conf.default;hb=HEAD" -O /etc/samba/smb.conf.original
+    sudo wget "https://raw.githubusercontent.com/arcolinux/arcolinux-iso/master/archiso/airootfs/etc/samba/smb.conf" -O /etc/samba/smb.conf
+    sudo systemctl enable smbd.service
+    sudo systemctl start smbd.service
+    sudo systemctl enable nmbd.service
+    sudo systemctl start nmbd.service
+
+    ##Change your username here
+    read -p "What is your login? It will be used to add this user to smb : " choice
+    sudo smbpasswd -a $choice
+
+    #access samba share windows
+    sudo pacman -S --noconfirm --needed gvfs-smb
+
+
+    # sudo systemctl restart ... if you run into trouble
+    # testparm will check the conf file for errors
+
+    # red hat samba sharing config
+
+    # echo "################################################################"
+    # echo "system-config-samba"
+    # echo "################################################################"
+    #
+    #
+    # package="system-config-samba"
+    #
+    # #----------------------------------------------------------------------------------
+    #
+    # #checking if application is already installed or else install with aur helpers
+    # if pacman -Qi $package &> /dev/null; then
+    #
+    # 	echo "################################################################"
+    # 	echo "################## "$package" is already installed"
+    # 	echo "################################################################"
+    #
+    # else
+    #
+    # 	#checking which helper is installed
+    # 	if pacman -Qi packer &> /dev/null; then
+    #
+    # 		echo "Installing with packer"
+    # 		packer -S --noconfirm --noedit  $package
+    #
+    # 	elif pacman -Qi pacaur &> /dev/null; then
+    #
+    # 		echo "Installing with pacaur"
+    # 		pacaur -S --noconfirm --noedit  $package
+    #
+    # 	elif pacman -Qi yaourt &> /dev/null; then
+    #
+    # 		echo "Installing with yaourt"
+    # 		yaourt -S --noconfirm $package
+    #
+    # 	fi
+    #
+    # 	# Just checking if installation was successful
+    # 	if pacman -Qi $package &> /dev/null; then
+    #
+    # 	echo "################################################################"
+    # 	echo "#########  "$package" has been installed"
+    # 	echo "################################################################"
+    #
+    # 	else
+    #
+    # 	echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    # 	echo "!!!!!!!!!  "$package" has NOT been installed"
+    # 	echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    #
+    #
+    # 	fi
+    #
+    # fi
+    #
+    #
+    #
+    #
+    #
+    # echo "Run system-config-samba to set up shares"
+    # echo "You will be able to connect to this computer with the login and password you created"
+    # echo "You will need to edit /etc/samba/smb.conf"
+    # echo "Scroll down to bottom"
+    # echo "Example code is in there"
+    # echo "Create a folder with name 'SHARED' in your homefolder."
+    # echo "Make sure you delete all the ; in those lines."
+    # echo "Reboot and enjoy"
   fi
 }
 #}}}
@@ -584,7 +629,7 @@ install_video_cards(){
 install_cups(){
   print_title "CUPS - https://wiki.archlinux.org/index.php/Cups"
   print_info "CUPS is the standards-based, open source printing system developed by Apple Inc. for Mac OS X and other UNIX-like operating systems."
-    package_install "cups cups-filters ghostscript gsfonts"
+    package_install "cups cups-pdf cups-filters ghostscript gsfonts"
     package_install "gutenprint foomatic-db foomatic-db-engine foomatic-db-nonfree foomatic-db-ppds foomatic-db-nonfree-ppds hplip splix cups-pdf foomatic-db-gutenprint-ppds"
     system_ctl enable org.cups.cupsd.service
 }
@@ -592,111 +637,111 @@ install_cups(){
 #ADDITIONAL FIRMWARE {{{
 install_additional_firmwares(){
   print_title "INSTALL ADDITIONAL FIRMWARES"
-  read_input_text "Install additional firmwares [Audio,Bluetooth,Scanner,Wireless]" $FIRMWARE
-    while true
-    do
-      print_title "INSTALL ADDITIONAL FIRMWARES"
-      echo " 1) $(menu_item "aic94xx-firmware") $AUR"
-      echo " 2) $(menu_item "alsa-firmware")"
-      echo " 3) $(menu_item "b43-firmware") $AUR"
-      echo " 4) $(menu_item "b43-firmware-legacy") $AUR"
-      echo " 5) $(menu_item "bfa-firmware") $AUR"
-      echo " 6) $(menu_item "bluez-firmware") [Broadcom BCM203x/STLC2300 Bluetooth]"
-      echo " 7) $(menu_item "broadcom-wl-dkms")"
-      echo " 8) $(menu_item "ipw2100-fw")"
-      echo " 9) $(menu_item "ipw2200-fw")"
-      echo "10) $(menu_item "libffado") [Fireware Audio Devices]"
-      echo "11) $(menu_item "libmtp") [Android Devices]"
-      echo "12) $(menu_item "libraw1394") [IEEE1394 Driver]"
-      echo ""
-      echo " d) DONE"
-      echo ""
-      FIRMWARE_OPTIONS+=" d"
-      read_input_options "$FIRMWARE_OPTIONS"
-      for OPT in ${OPTIONS[@]}; do
-        case "$OPT" in
-          1)
+  # read_input_text "Install additional firmwares [Audio,Bluetooth,Scanner,Wireless]" $FIRMWARE
+    # while true
+    # do
+    #   print_title "INSTALL ADDITIONAL FIRMWARES"
+    #   echo " 1) $(menu_item "aic94xx-firmware") $AUR"
+    #   echo " 2) $(menu_item "alsa-firmware")"
+    #   echo " 3) $(menu_item "b43-firmware") $AUR"
+    #   echo " 4) $(menu_item "b43-firmware-legacy") $AUR"
+    #   echo " 5) $(menu_item "bfa-firmware") $AUR"
+    #   echo " 6) $(menu_item "bluez-firmware") [Broadcom BCM203x/STLC2300 Bluetooth]"
+    #   echo " 7) $(menu_item "broadcom-wl-dkms")"
+    #   echo " 8) $(menu_item "ipw2100-fw")"
+    #   echo " 9) $(menu_item "ipw2200-fw")"
+    #   echo "10) $(menu_item "libffado") [Fireware Audio Devices]"
+    #   echo "11) $(menu_item "libmtp") [Android Devices]"
+    #   echo "12) $(menu_item "libraw1394") [IEEE1394 Driver]"
+    #   echo ""
+    #   echo " d) DONE"
+    #   echo ""
+    #   FIRMWARE_OPTIONS+=" d"
+    #   read_input_options "$FIRMWARE_OPTIONS"
+    #   for OPT in ${OPTIONS[@]}; do
+    #     case "$OPT" in
+    #       1)
             aur_package_install "aic94xx-firmware"
-            ;;
-          2)
-            package_install "alsa-firmware"
-            ;;
-          3)
-            aur_package_install "b43-firmware"
-            ;;
-          4)
-            aur_package_install "b43-firmware-legacy"
-            ;;
-          5)
-            aur_package_install "bfa-firmware"
-            ;;
-          6)
-            package_install "bluez-firmware"
-            ;;
-          7)
-            package_install "broadcom-wl-dkms"
-            ;;
-          8)
-            package_install "ipw2100-fw"
-            ;;
-          9)
-            package_install "ipw2200-fw"
-            ;;
-          10)
-            package_install "libffado"
-            ;;
-          11)
-            package_install "libmtp"
-            package_install "android-udev"
-            ;;
-          12)
-            package_install "libraw1394"
-            ;;
-          "d")
-            break
-            ;;
-          *)
-            invalid_option
-            ;;
-        esac
-      done
-      source sharedfuncs_elihw
+      #       ;;
+      #     2)
+      #       package_install "alsa-firmware"
+      #       ;;
+      #     3)
+      #       aur_package_install "b43-firmware"
+      #       ;;
+      #     4)
+      #       aur_package_install "b43-firmware-legacy"
+      #       ;;
+      #     5)
+      #       aur_package_install "bfa-firmware"
+      #       ;;
+      #     6)
+      #       package_install "bluez-firmware"
+      #       ;;
+      #     7)
+      #       package_install "broadcom-wl-dkms"
+      #       ;;
+      #     8)
+      #       package_install "ipw2100-fw"
+      #       ;;
+      #     9)
+      #       package_install "ipw2200-fw"
+      #       ;;
+      #     10)
+      #       package_install "libffado"
+      #       ;;
+      #     11)
+      #       package_install "libmtp"
+      #       package_install "android-udev"
+      #       ;;
+      #     12)
+      #       package_install "libraw1394"
+      #       ;;
+      #     "d")
+      #       break
+      #       ;;
+      #     *)
+      #       invalid_option
+      #       ;;
+      #   esac
+      # done
+      #source sharedfuncs_elihw
       create_ramdisk_environment
-    done
+    # done
 }
 #}}}
 #DESKTOP ENVIRONMENT {{{
 install_desktop_environment(){
   install_icon_theme() { #{{{
-    while true
-    do
-      print_title "GNOME ICONS"
-      echo " 1) $(menu_item "numix-icon-theme-git") $AUR"
-      echo " 2) $(menu_item "arc-icon-theme")"
-      echo ""
-      echo " b) BACK"
-      echo ""
-      ICONS_THEMES+=" b"
-      read_input_options "$ICONS_THEMES"
-      for OPT in ${OPTIONS[@]}; do
-        case "$OPT" in
-          1)
+    # while true
+    # do
+    #   print_title "GNOME ICONS"
+    #   echo " 1) $(menu_item "numix-icon-theme-git") $AUR"
+    #   echo " 2) $(menu_item "arc-icon-theme")"
+    #   echo ""
+    #   echo " b) BACK"
+    #   echo ""
+    #   ICONS_THEMES+=" b"
+    #   read_input_options "$ICONS_THEMES"
+    #   for OPT in ${OPTIONS[@]}; do
+    #     case "$OPT" in
+    #       1)
             aur_package_install "numix-icon-theme-git numix-circle-icon-theme-git"
-            ;;
-          2)
+          #   ;;
+          # 2)
             aur_package_install "moka-icon-theme-git"
             package_install "arc-icon-theme"
-            ;;
-          "b")
-            break
-            ;;
-          *)
-            invalid_option
-            ;;
-        esac
-      done
-      source sharedfuncs_elihw
-    done
+    #         ;;
+    #       "b")
+    #         break
+    #         ;;
+    #       *)
+    #         invalid_option
+    #         ;;
+    #     esac
+    #   done
+    #   source sharedfuncs_elihw
+    # done
   } #}}}
   install_gtk_theme() { #{{{
       print_title "GTK2/GTK3 THEMES"
@@ -705,96 +750,115 @@ install_desktop_environment(){
       #source sharedfuncs_elihw
   } #}}}
   install_display_manager() { #{{{
-    while true
-    do
-      print_title "DISPLAY MANAGER - https://wiki.archlinux.org/index.php/Display_Manager"
-      print_info "A display manager, or login manager, is a graphical interface screen that is displayed at the end of the boot process in place of the default shell."
-      echo " 1) $(menu_item "entrance-git" "Entrance") $AUR"
-      echo " 2) $(menu_item "gdm" "GDM")"
-      echo " 3) $(menu_item "lightdm" "LightDM")"
-      echo " 4) $(menu_item "sddm" "SDDM")"
-      echo " 5) $(menu_item "slim" "Slim")"
-      echo ""
-      echo " b) BACK|SKIP"
-      echo ""
-      DISPLAY_MANAGER+=" b"
-      read_input_options "$DISPLAY_MANAGER"
-      for OPT in ${OPTIONS[@]}; do
-        case "$OPT" in
-          1)
-            aur_package_install "entrance-git"
-            system_ctl enable entrance
-            ;;
-          2)
-            package_install "gdm"
-            system_ctl enable gdm
-            ;;
-          3)
-            if [[ ${KDE} -eq 1 ]]; then
-              package_install "lightdm lightdm-kde-greeter"
-            else
-              package_install "lightdm lightdm-gtk-greeter"
-            fi
-            system_ctl enable lightdm
-            ;;
-          4)
-            package_install "sddm sddm-kcm"
-            system_ctl enable sddm
-            sddm --example-config > /etc/sddm.conf
-            sed -i 's/Current=/Current=breeze/' /etc/sddm.conf
-            sed -i 's/CursorTheme=/CursorTheme=breeze_cursors/' /etc/sddm.conf
-            sed -i 's/Numlock=none/Numlock=on/' /etc/sddm.conf
-            ;;
-          5)
-            package_install "slim"
-            system_ctl enable slim
-            ;;
-          "b")
-            break
-            ;;
-          *)
-            invalid_option
-            ;;
-        esac
-      done
-      source sharedfuncs_elihw
-    done
+    # while true
+    # do
+    #   print_title "DISPLAY MANAGER - https://wiki.archlinux.org/index.php/Display_Manager"
+    #   print_info "A display manager, or login manager, is a graphical interface screen that is displayed at the end of the boot process in place of the default shell."
+    #   echo " 1) $(menu_item "entrance-git" "Entrance") $AUR"
+    #   echo " 2) $(menu_item "gdm" "GDM")"
+    #   echo " 3) $(menu_item "lightdm" "LightDM")"
+    #   echo " 4) $(menu_item "sddm" "SDDM")"
+    #   echo " 5) $(menu_item "slim" "Slim")"
+    #   echo ""
+    #   echo " b) BACK|SKIP"
+    #   echo ""
+    #   DISPLAY_MANAGER+=" b"
+    #   read_input_options "$DISPLAY_MANAGER"
+    #   for OPT in ${OPTIONS[@]}; do
+    #     case "$OPT" in
+    #       1)
+    #         aur_package_install "entrance-git"
+    #         system_ctl enable entrance
+    #         ;;
+    #       2)
+    #         package_install "gdm"
+    #         system_ctl enable gdm
+    #         ;;
+    #       3)
+    #         if [[ ${KDE} -eq 1 ]]; then
+    #           package_install "lightdm lightdm-kde-greeter"
+    #         else
+    #           package_install "lightdm lightdm-gtk-greeter"
+    #         fi
+    #         system_ctl enable lightdm
+    #         ;;
+    #       4)
+    #         package_install "sddm sddm-kcm"
+    #         system_ctl enable sddm
+    #         sddm --example-config > /etc/sddm.conf
+    #         sed -i 's/Current=/Current=breeze/' /etc/sddm.conf
+    #         sed -i 's/CursorTheme=/CursorTheme=breeze_cursors/' /etc/sddm.conf
+    #         sed -i 's/Numlock=none/Numlock=on/' /etc/sddm.conf
+    #         ;;
+    #       5)
+    #         package_install "slim"
+    #         system_ctl enable slim
+    #         ;;
+    #       "b")
+    #         break
+    #         ;;
+    #       *)
+    #         invalid_option
+    #         ;;
+    #     esac
+    #   done
+    #   source sharedfuncs_elihw
+    # done
+
   } #}}}
-  install_themes() { #{{{
-    while true
-    do
-      print_title "$1 THEMES"
-      echo " 1) $(menu_item "numix-circle-icon-theme-git" "Icons Themes") $AUR"
-      echo " 2) $(menu_item "arc-gtk-theme" "GTK Themes")"
-      echo ""
-      echo " d) DONE"
-      echo ""
-      THEMES_OPTIONS+=" d"
-      read_input_options "$THEMES_OPTIONS"
-      for OPT in ${OPTIONS[@]}; do
-        case "$OPT" in
-          1)
-            install_icon_theme
-            OPT=1
-            ;;
-          2)
-            install_gtk_theme
-            OPT=2
-            ;;
-          "d")
-            break
-            ;;
-          *)
-            invalid_option
-            ;;
-        esac
-      done
-      source sharedfuncs_elihw
-    done
-  } #}}}
+  # install_themes() { #{{{
+  #   while true
+  #   do
+  #     print_title "$1 THEMES"
+  #     echo " 1) $(menu_item "numix-circle-icon-theme-git" "Icons Themes") $AUR"
+  #     echo " 2) $(menu_item "arc-gtk-theme" "GTK Themes")"
+  #     echo ""
+  #     echo " d) DONE"
+  #     echo ""
+  #     THEMES_OPTIONS+=" d"
+  #     read_input_options "$THEMES_OPTIONS"
+  #     for OPT in ${OPTIONS[@]}; do
+  #       case "$OPT" in
+  #         1)
+  #           install_icon_theme
+  #           OPT=1
+  #           ;;
+  #         2)
+  #           install_gtk_theme
+  #           OPT=2
+  #           ;;
+  #         "d")
+  #           break
+  #           ;;
+  #         *)
+  #           invalid_option
+  #           ;;
+  #       esac
+  #     done
+  #     source sharedfuncs_elihw
+  #   done
+  # } #}}}
   install_misc_apps() { #{{{
       print_title "$1 ESSENTIAL APPS"
-            install_display_manager
+            iinstall_display_manager
+            package_install "arandr"
+            package_install "awesome-terminal-fonts"
+            package_install "imagemagick"
+            package_install "compton"
+            package_install "lxappearance"
+            package_install "lxrandr"
+            package_install "nitrogen"
+            package_install "rofi"
+            package_install "slim"
+            package_install "volumeicon"
+            package_install "w3m"
+            package_install "xorg-xrandr"
+            package_install "xfce4-appfinder"
+            package_install "xfce4-notifyd"
+            package_install "xfce4-power-manager"
+            package_install "xfce4-settings"
+            package_install "xfce4-screenshooter"
+            package_install "xfce4-taskmanager"
             package_install "dmenu"
             package_install "feh"
             package_install "viewnior"
@@ -808,263 +872,317 @@ install_desktop_environment(){
             package_install "xcompmgr transset-df"
             package_install "zathura"
             package_install "speedtest-cli"
+            aur_package_install "yad"
+	          aur_package_install "skippy-xd-git"
 #      source sharedfuncs_elihw
   } #}}}
 
   print_title "DESKTOP ENVIRONMENT|WINDOW MANAGER"
   print_info "A DE provide a complete GUI for a system by bundling together a variety of X clients written using a common widget toolkit and set of libraries.\n\nA window manager is one component of a system's graphical user interface."
 
-  echo -e "Select your DE or WM:\n"
-  echo " --- DE ---         --- WM ---"
-  echo " 1) Cinnamon        10) Awesome"
-  echo " 2) Deepin          11) Fluxbox"
-  echo " 3) Enlightenment   12) i3"
-  echo " 4) GNOME           13) OpenBox"
-  echo " 5) KDE             14) Xmonad"
-  echo " 6) LXQT"
-  echo " 7) Mate"
-  echo " 8) XFCE"
-  echo " 9) Budgie"
-  echo ""
-  echo " b) BACK"
-  read_input $DESKTOPENV
-  case "$OPTION" in
-    1)
-      #CINNAMON {{{
-      print_title "CINNAMON - https://wiki.archlinux.org/index.php/Cinnamon"
-      print_info "Cinnamon is a fork of GNOME Shell, initially developed by Linux Mint. It attempts to provide a more traditional user environment based on the desktop metaphor, like GNOME 2. Cinnamon uses Muffin, a fork of the GNOME 3 window manager Mutter, as its window manager."
-      package_install "cinnamon nemo-fileroller nemo-preview"
-      # Cinnamon does not include the following: a screenshot utility, editor, terminal... Hence installing some default choices explicitly.
-      package_install "gnome-screenshot gedit gnome-terminal gnome-control-center gnome-system-monitor gnome-schedule gnome-power-manager"
-      # Suggested by https://bbs.archlinux.org/viewtopic.php?id=185123
-      aur_package_install "mintlocale"
-      # config xinitrc
-      config_xinitrc "cinnamon-session"
-      CINNAMON=1
-      pause_function
-      install_display_manager
-      install_themes "CINNAMON"
-      ;;
-      #}}}
-    2)
-      #DEEPIN {{{
-      print_title "DEEPIN - http://www.linuxdeepin.com"
-      print_info "The desktop interface and apps feature an intuitive and elegant design. Moving around, sharing and searching etc. has become simply a joyful experience."
-      package_install "deepin deepin-extra lightdm-gtk-greeter"
-      # config xinitrc
-      config_xinitrc "startdde"
-      #Tweaks
-      pause_function
-      system_ctl enable lightdm
-      sed -i 's/#greeter-session=example-gtk-gnome/greeter-session=lightdm-deepin-greeter/' /etc/lightdm/lightdm.conf
-      ;;
-      #}}}
-    3)
-      #ENLIGHTENMENT {{{
-      print_title "ENLIGHTENMENT - http://wiki.archlinux.org/index.php/Enlightenment"
-      print_info "Enlightenment, also known simply as E, is a stacking window manager for the X Window System which can be used alone or in conjunction with a desktop environment such as GNOME or KDE. Enlightenment is often used as a substitute for a full desktop environment."
-      package_install "enlightenment terminology"
-      package_install "leafpad epdfview"
-      package_install "lxappearance"
-      # config xinitrc
-      config_xinitrc "enlightenment_start"
-      pause_function
-      install_misc_apps "Enlightenment"
-      install_themes "Enlightenment"
-      ;;
-      #}}}
-    4)
-      #GNOME {{{
-      print_title "GNOME - https://wiki.archlinux.org/index.php/GNOME"
-      print_info "GNOME is a desktop environment and graphical user interface that runs on top of a computer operating system. It is composed entirely of free and open source software. It is an international project that includes creating software development frameworks, selecting application software for the desktop, and working on the programs that manage application launching, file handling, and window and task management."
-      package_install "gnome gnome-extra gnome-software gnome-initial-setup"
-      package_install "deja-dup gedit-plugins gpaste gnome-tweak-tool gnome-power-manager"
-      package_install "nautilus-share"
-      # remove gnome games
-      package_remove "aisleriot atomix four-in-a-row five-or-more gnome-2048 gnome-chess gnome-klotski gnome-mahjongg gnome-mines gnome-nibbles gnome-robots gnome-sudoku gnome-tetravex gnome-taquin swell-foop hitori iagno quadrapassel lightsoff tali"
-      # config xinitrc
-      config_xinitrc "gnome-session"
-      GNOME=1
-      pause_function
-      install_themes "GNOME"
-      #Gnome Display Manager (a reimplementation of xdm)
-      system_ctl enable gdm
-      ;;
-      #}}}
-    5)
-      #KDE {{{
-      print_title "KDE - https://wiki.archlinux.org/index.php/KDE"
-      print_info "KDE is an international free software community producing an integrated set of cross-platform applications designed to run on Linux, FreeBSD, Microsoft Windows, Solaris and Mac OS X systems. It is known for its Plasma Desktop, a desktop environment provided as the default working environment on many Linux distributions."
-      package_install "plasma kf5 sddm"
-      package_install "ark dolphin dolphin-plugins kio-extras kdeconnect quota-tools gwenview kipi-plugins kate kcalc konsole spectacle okular sweeper kwalletmanager"
-      is_package_installed "cups" && package_install "print-manager"
-      [[ $LOCALE != en_US ]] && package_install "kde-l10n-$LOCALE_KDE"
-      # config xinitrc
-      config_xinitrc "startkde"
-      pause_function
-      #KDE CUSTOMIZATION {{{
-      while true
-      do
-        print_title "KDE CUSTOMIZATION"
-        echo " 1) $(menu_item "choqok")"
-        echo " 2) $(menu_item "digikam")"
-        echo " 3) $(menu_item "k3b")"
-        echo " 4) $(menu_item "skrooge")"
-        echo " 5) $(menu_item "yakuake")"
-        echo ""
-        echo " d) DONE"
-        echo ""
-        KDE_OPTIONS+=" d"
-        read_input_options "$KDE_OPTIONS"
-        for OPT in ${OPTIONS[@]}; do
-          case "$OPT" in
-            1)
-              package_install "choqok"
-              ;;
-            2)
-              package_install "digikam"
-              ;;
-            3)
-              package_install "k3b cdrdao dvd+rw-tools"
-              ;;
-            4)
-              package_install "skrooge"
-              ;;
-            5)
-              package_install "yakuake"
-              ;;
-            "d")
-              break
-              ;;
-            *)
-              invalid_option
-              ;;
-          esac
-        done
-        source sharedfuncs_elihw
-      done
-      #}}}
-      system_ctl enable sddm
-      sddm --example-config > /etc/sddm.conf
-      sed -i 's/Current=/Current=breeze/' /etc/sddm.conf
-      sed -i 's/CursorTheme=/CursorTheme=breeze_cursors/' /etc/sddm.conf
-      sed -i 's/Numlock=none/Numlock=on/' /etc/sddm.conf
-      KDE=1
-      ;;
-      #}}}
-    6)
-      #LXQT {{{
-      print_title "LXQT - http://wiki.archlinux.org/index.php/lxqt"
-      print_info "LXQt is the Qt port and the upcoming version of LXDE, the Lightweight Desktop Environment. It is the product of the merge between the LXDE-Qt and the Razor-qt projects: A lightweight, modular, blazing-fast and user-friendly desktop environment."
-      package_install "lxqt openbox oxygen-icons qtcurve"
-      package_install "leafpad epdfview"
-      mkdir -p /home/${username}/.config/lxqt
-      cp /etc/xdg/lxqt/* /home/${username}/.config/lxqt
-      mkdir -p /home/${username}/.config/openbox/
-      cp /etc/xdg/openbox/{menu.xml,rc.xml,autostart} /home/${username}/.config/openbox/
-      chown -R ${username}:users /home/${username}/.config
-      # config xinitrc
-      config_xinitrc "startlxqt"
-      pause_function
-      install_misc_apps "LXQT"
-      install_themes "LXQT"
-      KDE=1
-      ;;
-      #}}}
-    7)
-      #MATE {{{
-      print_title "MATE - https://wiki.archlinux.org/index.php/Mate"
-      print_info "The MATE Desktop Environment is a fork of GNOME 2 that aims to provide an attractive and intuitive desktop to Linux users using traditional metaphors."
-      package_install "mate mate-extra"
-      # config xinitrc
-      config_xinitrc "mate-session"
-      pause_function
-      install_display_manager
-      install_themes "MATE"
-      ;;
-      #}}}
-    8)
-      #XFCE {{{
-      print_title "XFCE - https://wiki.archlinux.org/index.php/Xfce"
-      print_info "Xfce is a free software desktop environment for Unix and Unix-like platforms, such as Linux, Solaris, and BSD. It aims to be fast and lightweight, while still being visually appealing and easy to use."
-      package_install "xfce4 xfce4-goodies xarchiver mupdf"
-      # config xinitrc
-      config_xinitrc "startxfce4"
-      pause_function
-      install_display_manager
-      install_themes "XFCE"
-      ;;
-      #}}}
-    9)
-      #BUDGIE {{{
-      print_title "BUDGIE - https://wiki.archlinux.org/index.php/Budgie_Desktop"
-      print_info "Budgie is the default desktop of Solus Operating System, written from scratch. Besides a more modern design, Budgie can emulate the look and feel of the GNOME 2 desktop."
-      package_install "gnome gnome-extra gnome-software gnome-initial-setup telepathy"
-      package_install "deja-dup gedit-plugins gpaste gnome-tweak-tool gnome-power-manager"
-      package_install "budgie-desktop"
-      package_install "nautilus-share"
-      # remove gnome games
-      package_remove "aisleriot atomix four-in-a-row five-or-more gnome-2048 gnome-chess gnome-klotski gnome-mahjongg gnome-mines gnome-nibbles gnome-robots gnome-sudoku gnome-tetravex gnome-taquin swell-foop hitori iagno quadrapassel lightsoff"
-      # config xinitrc
-      config_xinitrc "export XDG_CURRENT_DESKTOP=Budgie:GNOME \n budgie-desktop"
-      GNOME=1
-      pause_function
-      install_themes "GNOME"
-      #Gnome Display Manager (a reimplementation of xdm)
-      system_ctl enable gdm
-      ;;
-      #}}}
-    10)
-      #AWESOME {{{
-      print_title "AWESOME - http://wiki.archlinux.org/index.php/Awesome"
-      print_info "awesome is a highly configurable, next generation framework window manager for X. It is very fast, extensible and licensed under the GNU GPLv2 license."
-      package_install "awesome"
-      package_install "lxappearance"
-      package_install "leafpad epdfview nitrogen"
-      if [[ ! -d /home/${username}/.config/awesome/ ]]; then
-        mkdir -p /home/${username}/.config/awesome/
-        cp /etc/xdg/awesome/rc.lua /home/${username}/.config/awesome/
-        chown -R ${username}:users /home/${username}/.config
-      fi
-      # config xinitrc
-      config_xinitrc "awesome"
-      pause_function
-      install_misc_apps "AWESOME"
-      install_themes "AWESOME"
-      ;;
-      #}}}
-    11)
-      #FLUXBOX {{{
-      print_title "FLUXBOX - http://wiki.archlinux.org/index.php/Fluxbox"
-      print_info "Fluxbox is yet another window manager for X11. It is based on the (now abandoned) Blackbox 0.61.1 code, but with significant enhancements and continued development. Fluxbox is very light on resources and fast, yet provides interesting window management tools such as tabbing and grouping."
-      package_install "fluxbox menumaker"
-      package_install "lxappearance"
-      package_install "leafpad epdfview"
-      # config xinitrc
-      config_xinitrc "startfluxbox"
-      install_misc_apps "FLUXBOX"
-      install_themes "FLUXBOX"
-      pause_function
-      ;;
-      #}}}
-    12)
-      #I3 {{{
+  # echo -e "Select your DE or WM:\n"
+  # echo " --- DE ---         --- WM ---"
+  # echo " 1) Cinnamon        10) Awesome"
+  # echo " 2) Deepin          11) Fluxbox"
+  # echo " 3) Enlightenment   12) i3"
+  # echo " 4) GNOME           13) OpenBox"
+  # echo " 5) KDE             14) Xmonad"
+  # echo " 6) LXQT"
+  # echo " 7) Mate"
+  # echo " 8) XFCE"
+  # echo " 9) Budgie"
+  # echo ""
+  # echo " b) BACK"
+  # read_input $DESKTOPENV
+  # case "$OPTION" in
+  #   1)
+  #     #CINNAMON {{{
+  #     print_title "CINNAMON - https://wiki.archlinux.org/index.php/Cinnamon"
+  #     print_info "Cinnamon is a fork of GNOME Shell, initially developed by Linux Mint. It attempts to provide a more traditional user environment based on the desktop metaphor, like GNOME 2. Cinnamon uses Muffin, a fork of the GNOME 3 window manager Mutter, as its window manager."
+  #     package_install "cinnamon nemo-fileroller nemo-preview"
+  #     # Cinnamon does not include the following: a screenshot utility, editor, terminal... Hence installing some default choices explicitly.
+  #     package_install "gnome-screenshot gedit gnome-terminal gnome-control-center gnome-system-monitor gnome-schedule gnome-power-manager"
+  #     # Suggested by https://bbs.archlinux.org/viewtopic.php?id=185123
+  #     aur_package_install "mintlocale"
+  #     # config xinitrc
+  #     config_xinitrc "cinnamon-session"
+  #     CINNAMON=1
+  #     pause_function
+  #     install_display_manager
+  #     install_themes "CINNAMON"
+  #     ;;
+  #     #}}}
+  #   2)
+  #     #DEEPIN {{{
+  #     print_title "DEEPIN - http://www.linuxdeepin.com"
+  #     print_info "The desktop interface and apps feature an intuitive and elegant design. Moving around, sharing and searching etc. has become simply a joyful experience."
+  #     package_install "deepin deepin-extra lightdm-gtk-greeter"
+  #     # config xinitrc
+  #     config_xinitrc "startdde"
+  #     #Tweaks
+  #     pause_function
+  #     system_ctl enable lightdm
+  #     sed -i 's/#greeter-session=example-gtk-gnome/greeter-session=lightdm-deepin-greeter/' /etc/lightdm/lightdm.conf
+  #     ;;
+  #     #}}}
+  #   3)
+  #     #ENLIGHTENMENT {{{
+  #     print_title "ENLIGHTENMENT - http://wiki.archlinux.org/index.php/Enlightenment"
+  #     print_info "Enlightenment, also known simply as E, is a stacking window manager for the X Window System which can be used alone or in conjunction with a desktop environment such as GNOME or KDE. Enlightenment is often used as a substitute for a full desktop environment."
+  #     package_install "enlightenment terminology"
+  #     package_install "leafpad epdfview"
+  #     package_install "lxappearance"
+  #     # config xinitrc
+  #     config_xinitrc "enlightenment_start"
+  #     pause_function
+  #     install_misc_apps "Enlightenment"
+  #     install_themes "Enlightenment"
+  #     ;;
+  #     #}}}
+  #   4)
+  #     #GNOME {{{
+  #     print_title "GNOME - https://wiki.archlinux.org/index.php/GNOME"
+  #     print_info "GNOME is a desktop environment and graphical user interface that runs on top of a computer operating system. It is composed entirely of free and open source software. It is an international project that includes creating software development frameworks, selecting application software for the desktop, and working on the programs that manage application launching, file handling, and window and task management."
+  #     package_install "gnome gnome-extra gnome-software gnome-initial-setup"
+  #     package_install "deja-dup gedit-plugins gpaste gnome-tweak-tool gnome-power-manager"
+  #     package_install "nautilus-share"
+  #     # remove gnome games
+  #     package_remove "aisleriot atomix four-in-a-row five-or-more gnome-2048 gnome-chess gnome-klotski gnome-mahjongg gnome-mines gnome-nibbles gnome-robots gnome-sudoku gnome-tetravex gnome-taquin swell-foop hitori iagno quadrapassel lightsoff tali"
+  #     # config xinitrc
+  #     config_xinitrc "gnome-session"
+  #     GNOME=1
+  #     pause_function
+  #     install_themes "GNOME"
+  #     #Gnome Display Manager (a reimplementation of xdm)
+  #     system_ctl enable gdm
+  #     ;;
+  #     #}}}
+  #   5)
+  #     #KDE {{{
+  #     print_title "KDE - https://wiki.archlinux.org/index.php/KDE"
+  #     print_info "KDE is an international free software community producing an integrated set of cross-platform applications designed to run on Linux, FreeBSD, Microsoft Windows, Solaris and Mac OS X systems. It is known for its Plasma Desktop, a desktop environment provided as the default working environment on many Linux distributions."
+  #     package_install "plasma kf5 sddm"
+  #     package_install "ark dolphin dolphin-plugins kio-extras kdeconnect quota-tools gwenview kipi-plugins kate kcalc konsole spectacle okular sweeper kwalletmanager"
+  #     is_package_installed "cups" && package_install "print-manager"
+  #     [[ $LOCALE != en_US ]] && package_install "kde-l10n-$LOCALE_KDE"
+  #     # config xinitrc
+  #     config_xinitrc "startkde"
+  #     pause_function
+  #     #KDE CUSTOMIZATION {{{
+  #     while true
+  #     do
+  #       print_title "KDE CUSTOMIZATION"
+  #       echo " 1) $(menu_item "choqok")"
+  #       echo " 2) $(menu_item "digikam")"
+  #       echo " 3) $(menu_item "k3b")"
+  #       echo " 4) $(menu_item "skrooge")"
+  #       echo " 5) $(menu_item "yakuake")"
+  #       echo ""
+  #       echo " d) DONE"
+  #       echo ""
+  #       KDE_OPTIONS+=" d"
+  #       read_input_options "$KDE_OPTIONS"
+  #       for OPT in ${OPTIONS[@]}; do
+  #         case "$OPT" in
+  #           1)
+  #             package_install "choqok"
+  #             ;;
+  #           2)
+  #             package_install "digikam"
+  #             ;;
+  #           3)
+  #             package_install "k3b cdrdao dvd+rw-tools"
+  #             ;;
+  #           4)
+  #             package_install "skrooge"
+  #             ;;
+  #           5)
+  #             package_install "yakuake"
+  #             ;;
+  #           "d")
+  #             break
+  #             ;;
+  #           *)
+  #             invalid_option
+  #             ;;
+  #         esac
+  #       done
+  #       source sharedfuncs_elihw
+  #     done
+  #     #}}}
+  #     system_ctl enable sddm
+  #     sddm --example-config > /etc/sddm.conf
+  #     sed -i 's/Current=/Current=breeze/' /etc/sddm.conf
+  #     sed -i 's/CursorTheme=/CursorTheme=breeze_cursors/' /etc/sddm.conf
+  #     sed -i 's/Numlock=none/Numlock=on/' /etc/sddm.conf
+  #     KDE=1
+  #     ;;
+  #     #}}}
+  #   6)
+  #     #LXQT {{{
+  #     print_title "LXQT - http://wiki.archlinux.org/index.php/lxqt"
+  #     print_info "LXQt is the Qt port and the upcoming version of LXDE, the Lightweight Desktop Environment. It is the product of the merge between the LXDE-Qt and the Razor-qt projects: A lightweight, modular, blazing-fast and user-friendly desktop environment."
+  #     package_install "lxqt openbox oxygen-icons qtcurve"
+  #     package_install "leafpad epdfview"
+  #     mkdir -p /home/${username}/.config/lxqt
+  #     cp /etc/xdg/lxqt/* /home/${username}/.config/lxqt
+  #     mkdir -p /home/${username}/.config/openbox/
+  #     cp /etc/xdg/openbox/{menu.xml,rc.xml,autostart} /home/${username}/.config/openbox/
+  #     chown -R ${username}:users /home/${username}/.config
+  #     # config xinitrc
+  #     config_xinitrc "startlxqt"
+  #     pause_function
+  #     install_misc_apps "LXQT"
+  #     install_themes "LXQT"
+  #     KDE=1
+  #     ;;
+  #     #}}}
+  #   7)
+  #     #MATE {{{
+  #     print_title "MATE - https://wiki.archlinux.org/index.php/Mate"
+  #     print_info "The MATE Desktop Environment is a fork of GNOME 2 that aims to provide an attractive and intuitive desktop to Linux users using traditional metaphors."
+  #     package_install "mate mate-extra"
+  #     # config xinitrc
+  #     config_xinitrc "mate-session"
+  #     pause_function
+  #     install_display_manager
+  #     install_themes "MATE"
+  #     ;;
+  #     #}}}
+  #   8)
+  #     #XFCE {{{
+  #     print_title "XFCE - https://wiki.archlinux.org/index.php/Xfce"
+  #     print_info "Xfce is a free software desktop environment for Unix and Unix-like platforms, such as Linux, Solaris, and BSD. It aims to be fast and lightweight, while still being visually appealing and easy to use."
+  #     package_install "xfce4 xfce4-goodies xarchiver mupdf"
+  #     # config xinitrc
+  #     config_xinitrc "startxfce4"
+  #     pause_function
+  #     install_display_manager
+  #     install_themes "XFCE"
+  #     ;;
+  #     #}}}
+  #   9)
+  #     #BUDGIE {{{
+  #     print_title "BUDGIE - https://wiki.archlinux.org/index.php/Budgie_Desktop"
+  #     print_info "Budgie is the default desktop of Solus Operating System, written from scratch. Besides a more modern design, Budgie can emulate the look and feel of the GNOME 2 desktop."
+  #     package_install "gnome gnome-extra gnome-software gnome-initial-setup telepathy"
+  #     package_install "deja-dup gedit-plugins gpaste gnome-tweak-tool gnome-power-manager"
+  #     package_install "budgie-desktop"
+  #     package_install "nautilus-share"
+  #     # remove gnome games
+  #     package_remove "aisleriot atomix four-in-a-row five-or-more gnome-2048 gnome-chess gnome-klotski gnome-mahjongg gnome-mines gnome-nibbles gnome-robots gnome-sudoku gnome-tetravex gnome-taquin swell-foop hitori iagno quadrapassel lightsoff"
+  #     # config xinitrc
+  #     config_xinitrc "export XDG_CURRENT_DESKTOP=Budgie:GNOME \n budgie-desktop"
+  #     GNOME=1
+  #     pause_function
+  #     install_themes "GNOME"
+  #     #Gnome Display Manager (a reimplementation of xdm)
+  #     system_ctl enable gdm
+  #     ;;
+  #     #}}}
+  #   10)
+  #     #AWESOME {{{
+  #     print_title "AWESOME - http://wiki.archlinux.org/index.php/Awesome"
+  #     print_info "awesome is a highly configurable, next generation framework window manager for X. It is very fast, extensible and licensed under the GNU GPLv2 license."
+  #     package_install "awesome"
+  #     package_install "lxappearance"
+  #     package_install "leafpad epdfview nitrogen"
+  #     if [[ ! -d /home/${username}/.config/awesome/ ]]; then
+  #       mkdir -p /home/${username}/.config/awesome/
+  #       cp /etc/xdg/awesome/rc.lua /home/${username}/.config/awesome/
+  #       chown -R ${username}:users /home/${username}/.config
+  #     fi
+  #     # config xinitrc
+  #     config_xinitrc "awesome"
+  #     pause_function
+  #     install_misc_apps "AWESOME"
+  #     install_themes "AWESOME"
+  #     ;;
+  #     #}}}
+  #   11)
+  #     #FLUXBOX {{{
+  #     print_title "FLUXBOX - http://wiki.archlinux.org/index.php/Fluxbox"
+  #     print_info "Fluxbox is yet another window manager for X11. It is based on the (now abandoned) Blackbox 0.61.1 code, but with significant enhancements and continued development. Fluxbox is very light on resources and fast, yet provides interesting window management tools such as tabbing and grouping."
+  #     package_install "fluxbox menumaker"
+  #     package_install "lxappearance"
+  #     package_install "leafpad epdfview"
+  #     # config xinitrc
+  #     config_xinitrc "startfluxbox"
+  #     install_misc_apps "FLUXBOX"
+  #     install_themes "FLUXBOX"
+  #     pause_function
+  #     ;;
+  #     #}}}
+  #   12)
+  #     #I3 {{{
+  #     print_title "i3 - https://wiki.archlinux.org/index.php/I3"
+  #     print_info "i3 is a dynamic tiling window manager inspired by wmii that is primarily targeted at developers and advanced users. The stated goals for i3 include clear documentation, proper multi-monitor support, a tree structure for windows, and different modes like in vim."
+  #     package_install "i3"
+  #     package_install "rofi"
+  #     # config xinitrc
+  #     config_xinitrc "i3"
+  #     pause_function
+  #     install_misc_apps "i3"
+  #     install_themes "i3"
+  #     ;;
+  #     #}}}
+  #   13)
+  #     #OPENBOX {{{
+  #     print_title "OPENBOX - http://wiki.archlinux.org/index.php/Openbox"
+  #     print_info "Openbox is a lightweight and highly configurable window manager with extensive standards support."
+  #     package_install "openbox obconf obmenu menumaker"
+  #     package_install "lxappearance"
+  #     package_install "leafpad epdfview nitrogen"
+  #     aur_package_install "openbox-patched"
+  #     mkdir -p /home/${username}/.config/openbox/
+  #     cp /etc/xdg/openbox/{menu.xml,rc.xml,autostart} /home/${username}/.config/openbox/
+  #     chown -R ${username}:users /home/${username}/.config
+  #     # config xinitrc
+  #     config_xinitrc "openbox-session"
+  #     pause_function
+  #     install_misc_apps "OPENBOX"
+  #     install_themes "OPENBOX"
+  #     ;;
+  #     #}}}
+  #   14)
+  #     #XMONAD {{{
+  #     print_title "XMONAD - http://wiki.archlinux.org/index.php/Xmonad"
+  #     print_info "xmonad is a tiling window manager for X. Windows are arranged automatically to tile the screen without gaps or overlap, maximizing screen use. Window manager features are accessible from the keyboard: a mouse is optional."
+  #     package_install "xmonad xmonad-contrib"
+  #     # config xinitrc
+  #     config_xinitrc "xmonad"
+  #     pause_function
+  #     install_misc_apps "XMONAD"
+  #     install_themes "XMONAD"
+  #     ;;
+  #     #}}}
+  #   "b")
+  #     break
+  #     ;;
+  #   *)
+  #     invalid_option
+  #     install_desktop_environment
+  #     ;;
+  # esac
+  print_title "DESKTOP ENVIRONMENT|WINDOW MANAGER"
+  print_info "A DE provide a complete GUI for a system by bundling together a variety of X clients written using a common widget toolkit and set of libraries.\n\nA window manager is one component of a system's graphical user interface."
+
+   #I3 {{{
       print_title "i3 - https://wiki.archlinux.org/index.php/I3"
       print_info "i3 is a dynamic tiling window manager inspired by wmii that is primarily targeted at developers and advanced users. The stated goals for i3 include clear documentation, proper multi-monitor support, a tree structure for windows, and different modes like in vim."
-      package_install "i3"
+      sudo pacman -S --noconfirm --needed i3status
+      aur_pachage_install "i3-gaps-next-git"
       package_install "rofi"
       # config xinitrc
       config_xinitrc "i3"
-      pause_function
-      install_misc_apps "i3"
-      install_themes "i3"
-      ;;
+      # distro specific
+      aur_pachage_install "i3blocks"
       #}}}
-    13)
+   # 13)
       #OPENBOX {{{
       print_title "OPENBOX - http://wiki.archlinux.org/index.php/Openbox"
       print_info "Openbox is a lightweight and highly configurable window manager with extensive standards support."
-      package_install "openbox obconf obmenu menumaker"
+      package_install "obconf obmenu menumaker"
       package_install "lxappearance"
       package_install "leafpad epdfview nitrogen"
       aur_package_install "openbox-patched"
@@ -1073,31 +1191,16 @@ install_desktop_environment(){
       chown -R ${username}:users /home/${username}/.config
       # config xinitrc
       config_xinitrc "openbox-session"
-      pause_function
+      # distro specific
+      package_install "gsimplecal"
+      package_install "oblogout"
+      aur_package_install "gtk2-perl"
+      aur_package_install "obkey"
+      aur_package_install "obmenu3"
+      aur_package_install "obmenu-generator"
+      aur_package_install "openbox-arc-git"
+      aur_package_install "perl-linux-desktopfiles"
       install_misc_apps "OPENBOX"
-      install_themes "OPENBOX"
-      ;;
-      #}}}
-    14)
-      #XMONAD {{{
-      print_title "XMONAD - http://wiki.archlinux.org/index.php/Xmonad"
-      print_info "xmonad is a tiling window manager for X. Windows are arranged automatically to tile the screen without gaps or overlap, maximizing screen use. Window manager features are accessible from the keyboard: a mouse is optional."
-      package_install "xmonad xmonad-contrib"
-      # config xinitrc
-      config_xinitrc "xmonad"
-      pause_function
-      install_misc_apps "XMONAD"
-      install_themes "XMONAD"
-      ;;
-      #}}}
-    "b")
-      break
-      ;;
-    *)
-      invalid_option
-      install_desktop_environment
-      ;;
-  esac
   #COMMON PKGS {{{
     #MTP SUPPORT {{{
     if is_package_installed "libmtp" ; then
@@ -1179,14 +1282,14 @@ install_development_apps(){
          package_remove "vim"
          package_install "gvim ctags"
          package_install "meld"
-         aur_package_install "sublime-text2"
-         aur_package_install "sublime-text-dev"
-         aur_package_install "android-sdk android-sdk-platform-tools android-sdk-build-tools android-platform"
-          add_user_to_group ${username} sdkusers
-          chown -R :sdkusers /opt/android-sdk/
-          chmod -R g+w /opt/android-sdk/
-          add_line "export ANDROID_HOME=/opt/android-sdk" "/home/${username}/.bashrc"
-          aur_package_install "android-studio"
+         # aur_package_install "sublime-text2"
+         # aur_package_install "sublime-text-dev"
+         # aur_package_install "android-sdk android-sdk-platform-tools android-sdk-build-tools android-platform"
+         #  add_user_to_group ${username} sdkusers
+         #  chown -R :sdkusers /opt/android-sdk/
+         #  chmod -R g+w /opt/android-sdk/
+         #  add_line "export ANDROID_HOME=/opt/android-sdk" "/home/${username}/.bashrc"
+         #  aur_package_install "android-studio"
          package_install "intellij-idea-community-edition"
          #package_install "qtcreator"
          aur_package_install "mysql-workbench"
@@ -1240,14 +1343,14 @@ install_office_apps(){
 #SYSTEM TOOLS {{{
 install_system_apps(){
     print_title "SYSTEM TOOLS APPS"
-          package_install "clamav"
+    package_install "clamav"
           cp /etc/clamav/clamd.conf.sample /etc/clamav/clamd.conf
           cp /etc/clamav/freshclam.conf.sample /etc/clamav/freshclam.conf
           sed -i '/Example/d' /etc/clamav/freshclam.conf
           sed -i '/Example/d' /etc/clamav/clamd.conf
           system_ctl enable clamd
           freshclam
-    	aur_package_install "cockpit storaged linux-user-chroot ostree"
+      aur_package_install "cockpit storaged linux-user-chroot ostree"
         aur_package_install "webmin"
         package_install "docker"
         add_user_to_group ${username} docker
@@ -1281,12 +1384,26 @@ install_system_apps(){
           fi
         package_install "icoutils wine wine_gecko wine-mono winetricks"
         package_install "netdata"
-          system_ctl enable netdata.service
+        system_ctl enable netdata.service
         package_install "nload"
         package_install "gnome-logs"
+        package_install "gnome-disk-utility"
+        package_install "polkit-gnome"
         package_install "qjournalctl"
         package_install "pacmanlogviewer"
         package_install "seahorse"
+        package_install "thunar"
+        package_install "termite"
+        package_install "thunar-archive-plugin"
+        package_install "thunar-volman"
+        package_install "mc"
+
+        #sh AUR/install-caffeine-ng-v*.sh
+        aur_package_install "conky-lua-archers"
+        aur_package_install "cool-retro-term"
+        aur_package_install "discord"
+        aur_package_install "mintstick-git"
+        aur_package_install "temps"
 }
 #}}}
 #GRAPHICS {{{
@@ -1382,7 +1499,7 @@ install_audio_apps(){
                   echo -e 'soundfont /usr/share/soundfonts/fluidr3/FluidR3GM.SF2' >> /etc/timidity++/timidity.cfg
                   aur_package_install "tomahawk"
                   package_install "quodlibet"
-                  
+
 }
 #}}}
 #VIDEO {{{
@@ -1400,7 +1517,7 @@ install_video_apps(){
                   package_install "kodi"
                   add_user_to_group ${username} kodi
                   package_install "obs-studio-git"
-            
+
 }
 #}}}
 #WEBSERVER {{{
@@ -1608,19 +1725,19 @@ install_fonts(){
 #}}}
 #IME INPUT TOOLS {{{
 choose_ime_m17n(){
-  while true	
-  do	
+  while true
+  do
     print_title "M17n based IME - Input scripts (such as the Indic ones) using m17n maps - https://wiki.archlinux.org/index.php/Internationalization"
-    echo " 1) $(menu_item "fcitx")"	
-    echo " 2) $(menu_item "ibus")"	
-    echo ""	
-    echo " b) BACK"	
-    echo ""	
+    echo " 1) $(menu_item "fcitx")"
+    echo " 2) $(menu_item "ibus")"
+    echo ""
+    echo " b) BACK"
+    echo ""
     IME_OPTIONS+=" b"
     read_input_options "IME_OPTIONS"
-    for OPT in ${OPTIONS[@]}; do	
-      case "$OPT" in	
-        1)	
+    for OPT in ${OPTIONS[@]}; do
+      case "$OPT" in
+        1)
           package_install "fcitx"
           package_install "fcitx-m17n"
           package_install "fcitx-qt4"
@@ -1632,23 +1749,23 @@ choose_ime_m17n(){
           echo -e '#!/bin/sh\n\n\n# Identify fcitx as a input module for both GTK and QT apps\nXMODIFIERS=@im=fcitx\nGTK_IM_MODULE=fcitx\nQT_IM_MODULE=fcitx\n\nexport XMODIFIERS GTK_IM_MODULE QT_IM_MODULE\necho we set XMODIFIERS GTK_IM_MODULE QT_IM_MODULE in profile.d\n' > /etc/profile.d/ime.sh
           # echo -e '#!/bin/sh\n\n\n# Identify fcitx as a input module for both GTK and QT apps\nXMODIFIERS=@im=fcitx\nGTK_IM_MODULE=fcitx\nQT_IM_MODULE=fcitx\n\nexport XMODIFIERS GTK_IM_MODULE QT_IM_MODULE\necho we set XMODIFIERS GTK_IM_MODULE QT_IM_MODULE in xprofile\n' > /etc/xprofile
           ;;
-        2)	
+        2)
           package_install "ibus"
           package_install "ibus-m17n"
           package_install "ibus-qt"
           echo -e '#!/bin/sh\n\n\n# Identify ibus as a input module for both GTK and QT apps\nXMODIFIERS=@im=ibus\nGTK_IM_MODULE=ibus\nQT_IM_MODULE=ibus\n\nexport XMODIFIERS GTK_IM_MODULE QT_IM_MODULE\necho we set XMODIFIERS GTK_IM_MODULE QT_IM_MODULE in profile.d\n' > /etc/profile.d/ime.sh
           ;;
         "b")
-          break	
-          ;;	
-        *)	
-          invalid_option	
-          ;;	
-      esac	
-    done	
-    source sharedfuncs_elihw	
-  done	
-}	
+          break
+          ;;
+        *)
+          invalid_option
+          ;;
+      esac
+    done
+    source sharedfuncs_elihw
+  done
+}
 #}}}
 #CLEAN ORPHAN PACKAGES {{{
 clean_orphan_packages(){
@@ -1860,7 +1977,53 @@ do
         checklist[10]=1
         ;;
       11)
-        install_games
+        install_gamespackage_install "clamav"
+          cp /etc/clamav/clamd.conf.sample /etc/clamav/clamd.conf
+          cp /etc/clamav/freshclam.conf.sample /etc/clamav/freshclam.conf
+          sed -i '/Example/d' /etc/clamav/freshclam.conf
+          sed -i '/Example/d' /etc/clamav/clamd.conf
+          system_ctl enable clamd
+          freshclam
+    	aur_package_install "cockpit storaged linux-user-chroot ostree"
+        aur_package_install "webmin"
+        package_install "docker"
+        add_user_to_group ${username} docker
+        is_package_installed "ufw" && package_remove "ufw"
+        is_package_installed "firewalld" && package_remove "firewalld"
+        package_install "firewalld"
+        system_ctl enable firewalld
+        package_install "gparted"
+        package_install "grsync"
+        aur_package_install "hosts-update"
+        hosts-update
+        package_install "htop"
+        aur_package_install "plex-media-server"
+        system_ctl enable plexmediaserver.service
+        print_title "UFW - https://wiki.archlinux.org/index.php/Ufw"
+        print_info "Ufw stands for Uncomplicated Firewall, and is a program for managing a netfilter firewall. It provides a command line interface and aims to be uncomplicated and easy to use."
+        is_package_installed "firewalld" && package_remove "firewalld"
+        aur_package_install "ufw gufw"
+        system_ctl enable ufw.service
+        aur_package_install "unified-remote-server"
+        system_ctl enable urserver.service
+          #Make sure we are not a VirtualBox Guest
+          VIRTUALBOX_GUEST=`dmidecode --type 1 | grep VirtualBox`
+          if [[ -z ${VIRTUALBOX_GUEST} ]]; then
+            package_install "virtualbox virtualbox-host-dkms virtualbox-guest-iso linux-headers"
+            aur_package_install "virtualbox-ext-oracle"
+            add_user_to_group ${username} vboxusers
+            modprobe vboxdrv vboxnetflt
+          else
+            cecho "${BBlue}[${Reset}${Bold}!${BBlue}]${Reset} VirtualBox was not installed as we are a VirtualBox guest."
+          fi
+        package_install "icoutils wine wine_gecko wine-mono winetricks"
+        package_install "netdata"
+          system_ctl enable netdata.service
+        package_install "nload"
+        package_install "gnome-logs"
+        package_install "qjournalctl"
+        package_install "pacmanlogviewer"
+        package_install "seahorse"
         checklist[11]=1
         ;;
       12)

@@ -71,6 +71,15 @@ install_system_apps(){
         aur_package_install "mintstick-git"
         aur_package_install "temps"
 
+	#install powerline
+	package_install "powerline powerline-fonts"
+	echo 
+	"powerline-daemon -q
+	POWERLINE_BASH_CONTINUATION=1
+	POWERLINE_BASH_SELECT=1
+	. /usr/lib/python3.6/site-packages/powerline/bindings/bash/powerline.sh" > 
+~/.bashrc
+source ~/.bashrc
 
 
 
