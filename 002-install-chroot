@@ -693,6 +693,8 @@ install_development_apps(){
          aur_package_install "qgit"
          aur_package_install "kdiff3"
          aur_package_install "regexxer"
+	 package_install "rustup"
+	 rustup install stable
 }
 #}}}
 #OFFICE {{{
