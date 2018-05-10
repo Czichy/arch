@@ -695,6 +695,7 @@ install_development_apps(){
          aur_package_install "regexxer"
 	 package_install "rustup"
 	 rustup install stable
+	 rustup default stable
 }
 #}}}
 #OFFICE {{{
