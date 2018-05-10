@@ -66,11 +66,10 @@ install_system_apps(){
 
         #sh AUR/install-caffeine-ng-v*.sh
         aur_package_install "conky-lua-archers"
-        aur_package_install "cool-retro-term"
         aur_package_install "discord"
         aur_package_install "mintstick-git"
         aur_package_install "temps"
-
+	aur_package_install "alacritty-git"
 	#install powerline
 	package_install "powerline powerline-fonts"
 	echo
