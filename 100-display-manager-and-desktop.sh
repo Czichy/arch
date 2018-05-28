@@ -68,7 +68,7 @@ install_display_manager() { #{{{
    #I3 {{{
       print_title "i3 - https://wiki.archlinux.org/index.php/I3"
       print_info "i3 is a dynamic tiling window manager inspired by wmii that is primarily targeted at developers and advanced users. The stated goals for i3 include clear documentation, proper multi-monitor support, a tree structure for windows, and different modes like in vim."
-      sudo pacman -S --noconfirm --needed i3status
+      #sudo pacman -S --noconfirm --needed i3status
       aur_package_install "i3-gaps-next-git"
       package_install "rofi"
       aur_package_install "i3status-rust-git"

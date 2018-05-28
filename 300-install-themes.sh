@@ -24,6 +24,7 @@ install_system_apps(){
 
   aur_package_install "ttf-font-awesome"
   aur_package_install "ttf-mac-fonts"
+  aur_package_install "otf-fira-code"
   aur_package_install "virtualbox-for-linux-kernel"
   aur_package_install "xcursor-breeze"
 
