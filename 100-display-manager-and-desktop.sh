@@ -71,10 +71,11 @@ install_display_manager() { #{{{
       sudo pacman -S --noconfirm --needed i3status
       aur_package_install "i3-gaps-next-git"
       package_install "rofi"
+      aur_package_install "i3status-rust-git"
       # config xinitrc
       config_xinitrc "i3"
       # distro specific
-      aur_package_install "i3blocks"
+      #aur_package_install "i3blocks"
       #}}}
    # 13)
       #OPENBOX {{{

@@ -69,7 +69,8 @@ install_system_apps(){
         aur_package_install "discord"
         aur_package_install "mintstick-git"
         aur_package_install "temps"
-	aur_package_install "alacritty-git"
+	package_install "cmake freetype2 fontconfig pkg-config make xclip"
+	aur_package_install "alacritty-scrollback-git"
 	#install powerline
 	package_install "powerline powerline-fonts"
 	echo

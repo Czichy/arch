@@ -27,6 +27,7 @@ install_system_apps(){
   aur_package_install "virtualbox-for-linux-kernel"
   aur_package_install "xcursor-breeze"
 
+  aur_package_install "vim-apprentice"
 # these come last always
   aur_package_install "hardcode-fixer-git"
   sudo hardcode-fixer

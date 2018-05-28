@@ -643,7 +643,7 @@ install_accessories_apps(){
          package_install "docky"
          aur_package_install "dockmanager"
          package_install "galculator"
-         aur_package_install "pamac-aur"
+         #aur_package_install "pamac-aur"
          aur_package_install "pyrenamer"
          aur_package_install "enpass-bin"
          if [[ ${KDE} -eq 1 ]]; then
@@ -661,9 +661,9 @@ install_accessories_apps(){
 #DEVELOPEMENT {{{
 install_development_apps(){
          aur_package_install "qtwebkit-bin"
-         package_install "atom"
-         package_install "emacs"
-#         package_remove "vim"
+         #package_install "atom"
+         #package_install "emacs"
+         package_remove "vim"
 	       # package_install "geany"
          package_install "gvim ctags"
          package_install "meld"
@@ -695,7 +695,7 @@ install_development_apps(){
          aur_package_install "regexxer"
 	 package_install "rustup"
 	 rustup install stable
-	 rustup default stable
+	 rustup install nightly && rustup default nightly
 }
 #}}}
 #OFFICE {{{
