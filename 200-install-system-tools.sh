@@ -83,7 +83,7 @@ install_system_apps(){
 
 
     echo "################################################################"
-    echo "####    Software from Arch Linux Repository installed     ######"
+    echo "####    System tools installed                            ######"
     echo "################################################################"
     }
  #}}}

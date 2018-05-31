@@ -30,6 +30,7 @@ load_script "110-install-sound.sh"
 load_script "130-install-printers.sh"
 load_script "140-install-samba.sh"
 load_script "200-install-system-tools.sh"
+load_script "201-install-development-apps.sh"
 load_script "300-install-themes.sh"
 #load_script "400-install-cloud-storage.sh"
 load_script "600-install-Arco.sh"
@@ -379,6 +380,9 @@ install_zsh(){
         run_as_user "sh -c \"$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)\""
         run_as_user "$EDITOR /home/${username}/.zshrc"
       fi
+    aur_package_install "antigen-git"
+    aur_package_install "prezto-git"
+    aur_package_install "fzf"
 }
 #}}}
 #READAHEAD {{{
@@ -656,46 +660,6 @@ install_accessories_apps(){
          package_install "terminator"
          aur_package_install "unified-remote-server"
          system_ctl enable urserver
-}
-#}}}
-#DEVELOPEMENT {{{
-install_development_apps(){
-         aur_package_install "qtwebkit-bin"
-         #package_install "atom"
-         #package_install "emacs"
-         package_remove "vim"
-	       # package_install "geany"
-         package_install "gvim ctags"
-         package_install "meld"
-         # aur_package_install "sublime-text2"
-         # aur_package_install "sublime-text-dev"
-         # aur_package_install "android-sdk android-sdk-platform-tools android-sdk-build-tools android-platform"
-         #  add_user_to_group ${username} sdkusers
-         #  chown -R :sdkusers /opt/android-sdk/
-         #  chmod -R g+w /opt/android-sdk/
-         #  add_line "export ANDROID_HOME=/opt/android-sdk" "/home/${username}/.bashrc"
-         #  aur_package_install "android-studio"
-         package_install "intellij-idea-community-edition"
-         #package_install "qtcreator"
-         #aur_package_install "mysql-workbench"
-         #package_remove "jdk"
-         #package_install "jdk8-openjdk"
-         #package_remove "jdk"
-         #package_install "jdk9-openjdk"
-         #package_remove "jdk"
-         #package_install "jdk10-openjdk"
-         #package_remove "jre{7,8,9,10}-openjdk"
-         #package_remove "jdk{7,8,9,10}-openjdk"
-         aur_package_install "jdk"
-         package_install "nodejs"
-         aur_package_install "visual-studio-code-bin"
-         aur_package_install "gitg"
-         aur_package_install "qgit"
-         aur_package_install "kdiff3"
-         aur_package_install "regexxer"
-	 package_install "rustup"
-	 rustup install stable
-	 rustup install nightly && rustup default nightly
 }
 #}}}
 #OFFICE {{{

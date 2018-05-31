@@ -7,7 +7,7 @@
 #   exit 1
 # fi
 #THEMES {{{
-install_system_apps(){
+install_themes(){
   aur_package_install "arc-gtk-theme-git"
   aur_package_install "conky-aureola"
   aur_package_install "downgrade"
@@ -21,7 +21,11 @@ install_system_apps(){
   aur_package_install "surfn-icons-git"
 
   #git clone https://github.com/addy-dclxvi/gtk-theme-collections ~/.themes
+  aur_package_install "vim-gruvbox-git vim-airline-gruvbox-git"
 
+  #fonts
+  aur_package_install "ttf-fantasque-sans-git"
+  
   aur_package_install "ttf-font-awesome"
   aur_package_install "ttf-mac-fonts"
   aur_package_install "otf-fira-code"
