@@ -29,8 +29,12 @@ load_script "100-display-manager-and-desktop.sh"
 load_script "110-install-sound.sh"
 load_script "130-install-printers.sh"
 load_script "140-install-samba.sh"
+# install apps
 load_script "200-install-system-tools.sh"
 load_script "201-install-development-apps.sh"
+load_script "202-install-internet-apps.sh"
+load_script "203-install-accessories-apps.sh"
+
 load_script "300-install-themes.sh"
 #load_script "400-install-cloud-storage.sh"
 load_script "600-install-Arco.sh"
@@ -638,30 +642,6 @@ install_nm_wicd(){
       system_ctl enable NetworkManager.service
 }
 #}}}
-#ACCESSORIES {{{
-install_accessories_apps(){
-         package_install "catfish"
-         aur_package_install "conky-lua"
-         package_install "lm_sensors"
-         sensors-detect --auto
-         package_install "docky"
-         aur_package_install "dockmanager"
-         package_install "galculator"
-         #aur_package_install "pamac-aur"
-         aur_package_install "pyrenamer"
-         aur_package_install "enpass-bin"
-         if [[ ${KDE} -eq 1 ]]; then
-            aur_package_install "hotshots"
-          else
-            aur_package_install "shutter"
-          fi
-         package_install "synapse"
-         aur_package_install "tilix-bin"
-         package_install "terminator"
-         aur_package_install "unified-remote-server"
-         system_ctl enable urserver
-}
-#}}}
 #OFFICE {{{
 install_office_apps(){
           # if [[ ${KDE} -eq 1 ]]; then
@@ -706,43 +686,6 @@ install_graphics_apps(){
         #package_install "scribus"
         #package_install "shotwell"
         package_install "simple-scan"
-}
-#}}}
-#INTERNET {{{
-install_internet_apps(){
-    print_title "INTERNET APPS"
-            print_title "BROWSER"
-            	  aur_package_install "google-chrome"
-                  package_install "chromium"
-                  package_install "firefox firefox-i18n-$LOCALE_FF"
-                  aur_package_install "vivaldi"
-            print_title "DOWNLOAD|FILESHARE"
-            	  aur_package_install "aerofs"
-                  aur_package_install "rslsync"
-                  package_install "deluge"
-                  aur_package_install "dropbox"
-                  aur_package_install "flareget"
-                  aur_package_install "jdownloader"
-                  package_install "qbittorrent"
-                  package_install "sparkleshare"
-                  aur_package_install "spideroak"
-                  if [[ ${KDE} -eq 1 ]]; then
-                    package_install "transmission-qt"
-                  else
-                    package_install "transmission-gtk"
-                  fi
-                  if [[ -f /home/${username}/.config/transmission/settings.json ]]; then
-                    replace_line '"blocklist-enabled": false' '"blocklist-enabled": true' /home/${username}/.config/transmission/settings.json
-                    replace_line "www\.example\.com\/blocklist" "list\.iblocklist\.com\/\?list=bt_level1&fileformat=p2p&archiveformat=gz" /home/${username}/.config/transmission/settings.json
-                  fi
-                  package_install "uget"
-                  package_install "youtube-dl"
-                  aur_package_install "tixati"
-                  aur_package_install "google-drive-ocamlfuse"
-            print_title "MAPPING TOOLS"
-                  aur_package_install "google-earth"
-            print_title "DESKTOP SHARE"
-                  aur_package_install "teamviewer"
 }
 #}}}
 #AUDIO {{{

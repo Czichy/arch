@@ -99,7 +99,7 @@ format_partitions	fifo	/^format_partitions(){$/;"	f
 format_swap_partition	001-install-arch	/^  format_swap_partition(){$/;"	f
 format_swap_partition	fifo	/^  format_swap_partition(){$/;"	f
 gem_install	sharedfuncs.sh	/^  gem_install() { #{{{$/;"	f
-install_accessories_apps	002-install-chroot	/^install_accessories_apps(){$/;"	f
+install_accessories_apps	203-install-accessories-apps.sh	/^install_accessories_apps(){$/;"	f
 install_accessories_apps	lilo	/^install_accessories_apps(){$/;"	f
 install_additional_firmwares	002-install-chroot	/^install_additional_firmwares(){$/;"	f
 install_additional_firmwares	lilo	/^install_additional_firmwares(){$/;"	f
@@ -132,7 +132,7 @@ install_graphics_apps	002-install-chroot	/^install_graphics_apps(){$/;"	f
 install_graphics_apps	lilo	/^install_graphics_apps(){$/;"	f
 install_gtk_theme	lilo	/^  install_gtk_theme() { #{{{$/;"	f
 install_icon_theme	lilo	/^  install_icon_theme() { #{{{$/;"	f
-install_internet_apps	002-install-chroot	/^install_internet_apps(){$/;"	f
+install_internet_apps	202-install-internet-apps.sh	/^install_internet_apps(){$/;"	f
 install_internet_apps	lilo	/^install_internet_apps(){$/;"	f
 install_mariadb	002-install-chroot	/^  install_mariadb(){ #{{{$/;"	f
 install_mariadb	lilo	/^  install_mariadb(){ #{{{$/;"	f
