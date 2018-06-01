@@ -1,0 +1,18 @@
+# Static information about the filesystems.
+# See fstab(5) for details.
+
+# <file system> <dir> <type> <options> <dump> <pass>
+# /dev/sdb2 UUID=af107153-92bf-42e1-b6ed-a7899c338b35
+PARTUUID=ab9af0ea-da4c-4d31-860b-8301f018a1c7	/         	ext4      	rw,relatime,data=ordered	0 1
+
+# /dev/sdb128 UUID=F47C-3821
+PARTUUID=946086ed-5add-4a3f-bce5-046da8469287	/boot     	vfat      	rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro	0 2
+
+# /dev/sdb1 UUID=a3cea246-bb23-4164-8e28-a84e50d02aed
+PARTUUID=2828e35d-0e52-441f-a95d-ec86d9028a06	none      	swap      	defaults,pri=-2	0 0
+
+#/dev/sda2
+UUID=2aa8b25c-2372-4756-bfc4-73271b3afee3	/home		ext4		nodev,nosuid	0	2
+
+#/dev/disk/by-uuid/E48C7E9A8C7E6748 /home/czichy/Data auto nosuid,nodev,nofail,x-gvfs-show 0 0
+/dev/disk/by-uuid/7272A86472A82EB3 /home/czichy/Programming auto nosuid,nodev,nofail,x-gvfs-show 0 0

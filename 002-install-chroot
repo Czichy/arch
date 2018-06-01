@@ -384,9 +384,11 @@ install_zsh(){
         run_as_user "sh -c \"$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)\""
         run_as_user "$EDITOR /home/${username}/.zshrc"
       fi
+    package_install "zsh-autosuggestions"
     aur_package_install "antigen-git"
     aur_package_install "prezto-git"
     aur_package_install "fzf"
+
 }
 #}}}
 #READAHEAD {{{
