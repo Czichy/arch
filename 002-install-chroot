@@ -37,7 +37,7 @@ load_script "203-install-accessories-apps.sh"
 
 load_script "300-install-themes.sh"
 #load_script "400-install-cloud-storage.sh"
-load_script "600-install-Arco.sh"
+#load_script "600-install-Arco.sh"
 load_script "700-install-fonts.sh"
 
 #ARCHLINUX U INSTALL {{{
@@ -1010,7 +1010,7 @@ choose_aurhelper
         checklist[10]=1
 
         install_themes
-        install_arcolinux
+        #install_arcolinux
         checklist[11]=1
 
         checklist[12]=1
