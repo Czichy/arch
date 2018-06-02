@@ -2,7 +2,7 @@
 
 #DEVELOPEMENT {{{
 install_development_apps(){
-         aur_package_install "qtwebkit-bin"
+         #aur_package_install "qtwebkit-bin"
          #package_install "atom"
          #package_install "emacs"
          package_remove "vim"
@@ -13,11 +13,11 @@ install_development_apps(){
          # aur_package_install "sublime-text-dev"
          aur_package_install "android-sdk android-sdk-platform-tools android-sdk-build-tools android-platform"
          package_install "android-tools android-udev libmtp"
-         #  add_user_to_group ${username} sdkusers
-         #  chown -R :sdkusers /opt/android-sdk/
-         #  chmod -R g+w /opt/android-sdk/
-         #  add_line "export ANDROID_HOME=/opt/android-sdk" "/home/${username}/.bashrc"
-         #  aur_package_install "android-studio"
+           add_user_to_group ${username} sdkusers
+           chown -R :sdkusers /opt/android-sdk/
+           chmod -R g+w /opt/android-sdk/
+           add_line "export ANDROID_HOME=/opt/android-sdk" "/home/${username}/.bashrc"
+           aur_package_install "android-studio"
          package_install "intellij-idea-community-edition"
          #package_install "qtcreator"
          #aur_package_install "mysql-workbench"
