@@ -712,25 +712,26 @@ install_audio_apps(){
             echo ""
             echo " b) BACK"
             echo ""
-                  package_install "amarok"
+                  #package_install "amarok"
                   package_install "audacious audacious-plugins"
-                  aur_package_install "banshee"
-                  package_install "clementine"
-                  package_install "deadbeef"
-                  aur_package_install "guayadeque"
-                  aur_package_install "musique"
-                  aur_package_install "nuvolaplayer-git"
-                  package_install "pragha"
-                  aur_package_install "radiotray"
-                  package_install "rhythmbox grilo grilo-plugins libgpod libdmapsharing gnome-python python-mako"
-                  #aur_package_install "pywebkitgtk"
-                  # pywebkitgtk compile needed and take alot of time around 4-5H on i5-8gigram-ssd hdd
-                  # + only need when Cannot activate "context pane" plugin
+                  package_install "ncmpcpp"
+		  aur_package_install "banshee"
+                  #package_install "clementine"
+                  #package_install "deadbeef"
+                  #aur_package_install "guayadeque"
+                  #aur_package_install "musique"
+                  #aur_package_install "nuvolaplayer-git"
+                  #package_install "pragha"
+                  #aur_package_install "radiotray"
+                  #package_install "rhythmbox grilo grilo-plugins libgpod libdmapsharing gnome-python python-mako"
+                  ##aur_package_install "pywebkitgtk"
+                  ## pywebkitgtk compile needed and take alot of time around 4-5H on i5-8gigram-ssd hdd
+                  ## + only need when Cannot activate "context pane" plugin
                   aur_package_install "spotify"
-                  aur_package_install "timidity++ fluidr3"
-                  echo -e 'soundfont /usr/share/soundfonts/fluidr3/FluidR3GM.SF2' >> /etc/timidity++/timidity.cfg
-                  aur_package_install "tomahawk"
-                  package_install "quodlibet"
+                  #aur_package_install "timidity++ fluidr3"
+                  #echo -e 'soundfont /usr/share/soundfonts/fluidr3/FluidR3GM.SF2' >> /etc/timidity++/timidity.cfg
+                  #aur_package_install "tomahawk"
+                  #package_install "quodlibet"
 
 }
 #}}}
@@ -739,8 +740,8 @@ install_video_apps(){
     print_title "VIDEO APPS"
           #PLAYERS {{{
             print_title "VIDEO PLAYERS"
-                  package_install "gnome-mplayer"
-                  package_install "livestreamer"
+                  #package_install "gnome-mplayer"
+                  #package_install "livestreamer"
                   package_install "minitube"
                   aur_package_install "miro"
                   package_install "mpv"
