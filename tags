@@ -4,8 +4,6 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-add_custom_repositories	002-install-chroot	/^add_custom_repositories(){$/;"	f
-add_custom_repositories	lilo	/^add_custom_repositories(){$/;"	f
 add_key	sharedfuncs.sh	/^  add_key() { #{{{$/;"	f
 add_key_user	sharedfuncs.sh	/^  add_key_user() { #{{{$/;"	f
 add_line	sharedfuncs.sh	/^  add_line() { #{{{$/;"	f
@@ -21,8 +19,6 @@ check_boot_system	sharedfuncs.sh	/^  check_boot_system() { #{{{$/;"	f
 check_connection	sharedfuncs.sh	/^  check_connection(){ #{{{$/;"	f
 check_domainname	sharedfuncs.sh	/^  check_domainname() { #{{{$/;"	f
 check_hostname	sharedfuncs.sh	/^  check_hostname() { #{{{$/;"	f
-check_mountpoint	001-install-arch	/^  check_mountpoint(){$/;"	f
-check_mountpoint	fifo	/^  check_mountpoint(){$/;"	f
 check_multilib	sharedfuncs.sh	/^  check_multilib(){ #{{{$/;"	f
 check_pacman_blocked	sharedfuncs.sh	/^  check_pacman_blocked() { #{{{$/;"	f
 check_root	sharedfuncs.sh	/^  check_root() { #{{{$/;"	f
@@ -31,147 +27,26 @@ check_user	sharedfuncs.sh	/^  check_user() { #{{{$/;"	f
 check_vga	sharedfuncs.sh	/^  check_vga() { #{{{$/;"	f
 checkbox	sharedfuncs.sh	/^  checkbox() { #{{{$/;"	f
 checkbox_package	sharedfuncs.sh	/^  checkbox_package() { #{{{$/;"	f
-choose_aurhelper	002-install-chroot	/^choose_aurhelper(){$/;"	f
-choose_aurhelper	lilo	/^choose_aurhelper(){$/;"	f
-choose_ime_m17n	lilo	/^choose_ime_m17n(){$/;"	f
-clean_orphan_packages	002-install-chroot	/^clean_orphan_packages(){$/;"	f
-clean_orphan_packages	lilo	/^clean_orphan_packages(){$/;"	f
 config_xinitrc	sharedfuncs.sh	/^  config_xinitrc() { #{{{$/;"	f
-configure_bootloader	001-install-arch	/^configure_bootloader(){$/;"	f
-configure_bootloader	fifo	/^configure_bootloader(){$/;"	f
-configure_fstab	001-install-arch	/^configure_fstab(){$/;"	f
-configure_fstab	fifo	/^configure_fstab(){$/;"	f
-configure_hardwareclock	001-install-arch	/^configure_hardwareclock(){$/;"	f
-configure_hardwareclock	fifo	/^configure_hardwareclock(){$/;"	f
-configure_hostname	001-install-arch	/^configure_hostname(){$/;"	f
-configure_hostname	fifo	/^configure_hostname(){$/;"	f
-configure_keymap	001-install-arch	/^configure_keymap(){$/;"	f
-configure_keymap	fifo	/^configure_keymap(){$/;"	f
-configure_locale	001-install-arch	/^configure_locale(){$/;"	f
-configure_locale	fifo	/^configure_locale(){$/;"	f
-configure_mirrorlist	001-install-arch	/^configure_mirrorlist(){$/;"	f
-configure_mirrorlist	fifo	/^configure_mirrorlist(){$/;"	f
-configure_mkinitcpio	001-install-arch	/^configure_mkinitcpio(){$/;"	f
-configure_mkinitcpio	fifo	/^configure_mkinitcpio(){$/;"	f
-configure_php	002-install-chroot	/^  configure_php(){ #{{{$/;"	f
-configure_php	lilo	/^  configure_php(){ #{{{$/;"	f
-configure_php_apache	002-install-chroot	/^  configure_php_apache(){ #{{{$/;"	f
-configure_php_apache	lilo	/^  configure_php_apache(){ #{{{$/;"	f
-configure_php_nginx	002-install-chroot	/^  configure_php_nginx(){ #{{{$/;"	f
-configure_php_nginx	lilo	/^  configure_php_nginx(){ #{{{$/;"	f
-configure_sudo	002-install-chroot	/^configure_sudo(){$/;"	f
-configure_sudo	lilo	/^configure_sudo(){$/;"	f
-configure_timezone	001-install-arch	/^configure_timezone(){$/;"	f
-configure_timezone	fifo	/^configure_timezone(){$/;"	f
-configure_user_account	002-install-chroot	/^  configure_user_account(){$/;"	f
-configure_user_account	lilo	/^  configure_user_account(){$/;"	f
 connection_test	sharedfuncs.sh	/^    connection_test() {$/;"	f
 contains_element	sharedfuncs.sh	/^  contains_element() { #{{{$/;"	f
-country_list	001-install-arch	/^  country_list(){$/;"	f
-country_list	fifo	/^  country_list(){$/;"	f
-create_new_user	002-install-chroot	/^  create_new_user(){$/;"	f
-create_new_user	lilo	/^  create_new_user(){$/;"	f
-create_partition	001-install-arch	/^create_partition(){$/;"	f
-create_partition	fifo	/^create_partition(){$/;"	f
-create_partition_scheme	001-install-arch	/^create_partition_scheme(){$/;"	f
-create_partition_scheme	fifo	/^create_partition_scheme(){$/;"	f
-create_ramdisk_environment	002-install-chroot	/^create_ramdisk_environment(){$/;"	f
-create_ramdisk_environment	lilo	/^create_ramdisk_environment(){$/;"	f
-create_sites_folder	002-install-chroot	/^  create_sites_folder(){ #{{{$/;"	f
-create_sites_folder	lilo	/^  create_sites_folder(){ #{{{$/;"	f
-create_swap	001-install-arch	/^  create_swap(){$/;"	f
-create_swap	fifo	/^  create_swap(){$/;"	f
-disable_partition	001-install-arch	/^  disable_partition(){$/;"	f
-disable_partition	fifo	/^  disable_partition(){$/;"	f
-enable_readahead	002-install-chroot	/^enable_readahead(){$/;"	f
-enable_readahead	lilo	/^enable_readahead(){$/;"	f
 error_msg	sharedfuncs.sh	/^  error_msg() { #{{{$/;"	f
-finish	001-install-arch	/^finish(){$/;"	f
-finish	002-install-chroot	/^finish(){$/;"	f
-finish	fifo	/^finish(){$/;"	f
-finish	lilo	/^finish(){$/;"	f
-font_config	002-install-chroot	/^font_config(){$/;"	f
-font_config	lilo	/^font_config(){$/;"	f
-format_partition	001-install-arch	/^  format_partition(){$/;"	f
-format_partition	fifo	/^  format_partition(){$/;"	f
-format_partitions	001-install-arch	/^format_partitions(){$/;"	f
-format_partitions	fifo	/^format_partitions(){$/;"	f
-format_swap_partition	001-install-arch	/^  format_swap_partition(){$/;"	f
-format_swap_partition	fifo	/^  format_swap_partition(){$/;"	f
 gem_install	sharedfuncs.sh	/^  gem_install() { #{{{$/;"	f
 install_accessories_apps	203-install-accessories-apps.sh	/^install_accessories_apps(){$/;"	f
-install_accessories_apps	lilo	/^install_accessories_apps(){$/;"	f
-install_additional_firmwares	002-install-chroot	/^install_additional_firmwares(){$/;"	f
-install_additional_firmwares	lilo	/^install_additional_firmwares(){$/;"	f
-install_adminer	002-install-chroot	/^  install_adminer(){ #{{{$/;"	f
-install_adminer	lilo	/^  install_adminer(){ #{{{$/;"	f
 install_arcolinux	600-install-Arco.sh	/^install_arcolinux(){$/;"	f
-install_audio_apps	002-install-chroot	/^install_audio_apps(){$/;"	f
-install_audio_apps	lilo	/^install_audio_apps(){$/;"	f
-install_base_system	001-install-arch	/^install_base_system(){$/;"	f
-install_base_system	fifo	/^install_base_system(){$/;"	f
-install_basic_setup	002-install-chroot	/^install_basic_setup(){$/;"	f
-install_basic_setup	lilo	/^install_basic_setup(){$/;"	f
-install_bootloader	001-install-arch	/^install_bootloader(){$/;"	f
-install_bootloader	fifo	/^install_bootloader(){$/;"	f
 install_cloud_storage	400-install-cloudstorage.sh	/^install_cloud_storage(){$/;"	f
 install_cups	130-install-printers.sh	/^install_cups(){$/;"	f
-install_cups	lilo	/^install_cups(){$/;"	f
-install_desktop_environment	lilo	/^install_desktop_environment(){$/;"	f
 install_development_apps	201-install-development-apps.sh	/^install_development_apps(){$/;"	f
-install_development_apps	lilo	/^install_development_apps(){$/;"	f
 install_display_manager	100-display-manager-and-desktop.sh	/^install_display_manager() { #{{{$/;"	f
-install_display_manager	lilo	/^  install_display_manager() { #{{{$/;"	f
-install_extra	002-install-chroot	/^install_extra(){$/;"	f
-install_extra	lilo	/^install_extra(){$/;"	f
 install_fonts	700-install-fonts.sh	/^install_fonts(){$/;"	f
-install_fonts	lilo	/^install_fonts(){$/;"	f
-install_gis_extension	002-install-chroot	/^  install_gis_extension(){ #{{{$/;"	f
-install_gis_extension	lilo	/^  install_gis_extension(){ #{{{$/;"	f
-install_graphics_apps	002-install-chroot	/^install_graphics_apps(){$/;"	f
-install_graphics_apps	lilo	/^install_graphics_apps(){$/;"	f
-install_gtk_theme	lilo	/^  install_gtk_theme() { #{{{$/;"	f
-install_icon_theme	lilo	/^  install_icon_theme() { #{{{$/;"	f
 install_internet_apps	202-install-internet-apps.sh	/^install_internet_apps(){$/;"	f
-install_internet_apps	lilo	/^install_internet_apps(){$/;"	f
-install_mariadb	002-install-chroot	/^  install_mariadb(){ #{{{$/;"	f
-install_mariadb	lilo	/^  install_mariadb(){ #{{{$/;"	f
 install_misc_apps	100-display-manager-and-desktop.sh	/^  install_misc_apps() { #{{{$/;"	f
-install_misc_apps	lilo	/^  install_misc_apps() { #{{{$/;"	f
-install_nfs	002-install-chroot	/^install_nfs(){$/;"	f
-install_nfs	lilo	/^install_nfs(){$/;"	f
-install_nm_wicd	002-install-chroot	/^install_nm_wicd(){$/;"	f
-install_nm_wicd	lilo	/^install_nm_wicd(){$/;"	f
-install_office_apps	002-install-chroot	/^install_office_apps(){$/;"	f
-install_office_apps	lilo	/^install_office_apps(){$/;"	f
-install_postgresql	002-install-chroot	/^  install_postgresql(){ #{{{$/;"	f
-install_postgresql	lilo	/^  install_postgresql(){ #{{{$/;"	f
 install_samba	140-install-samba.sh	/^install_samba(){$/;"	f
-install_samba	lilo	/^install_samba(){$/;"	f
 install_sound	110-install-sound.sh	/^install_sound(){$/;"	f
-install_ssh	002-install-chroot	/^install_ssh(){$/;"	f
-install_ssh	lilo	/^install_ssh(){$/;"	f
 install_system_apps	200-install-system-tools.sh	/^install_system_apps(){$/;"	f
-install_system_apps	lilo	/^install_system_apps(){$/;"	f
 install_themes	300-install-themes.sh	/^install_themes(){$/;"	f
-install_tlp	002-install-chroot	/^install_tlp(){$/;"	f
-install_tlp	lilo	/^install_tlp(){$/;"	f
-install_video_apps	002-install-chroot	/^install_video_apps(){$/;"	f
-install_video_apps	lilo	/^install_video_apps(){$/;"	f
-install_video_cards	002-install-chroot	/^install_video_cards(){$/;"	f
-install_video_cards	lilo	/^install_video_cards(){$/;"	f
-install_web_server	002-install-chroot	/^install_web_server(){$/;"	f
-install_web_server	lilo	/^install_web_server(){$/;"	f
-install_xorg	002-install-chroot	/^install_xorg(){$/;"	f
-install_xorg	lilo	/^install_xorg(){$/;"	f
-install_zram	002-install-chroot	/^install_zram (){$/;"	f
-install_zram	lilo	/^install_zram (){$/;"	f
-install_zsh	002-install-chroot	/^install_zsh(){$/;"	f
-install_zsh	lilo	/^install_zsh(){$/;"	f
 invalid_option	sharedfuncs.sh	/^  invalid_option() { #{{{$/;"	f
 is_package_installed	sharedfuncs.sh	/^  is_package_installed() { #{{{$/;"	f
-language_selector	002-install-chroot	/^language_selector(){$/;"	f
-language_selector	lilo	/^language_selector(){$/;"	f
 mainmenu_item	sharedfuncs.sh	/^  mainmenu_item() { #{{{$/;"	f
 menu_item	sharedfuncs.sh	/^  menu_item() { #{{{$/;"	f
 ncecho	sharedfuncs.sh	/^  ncecho() { #{{{$/;"	f
@@ -189,40 +64,13 @@ progress	sharedfuncs.sh	/^  progress() { #{{{$/;"	f
 read_input	sharedfuncs.sh	/^  read_input() { #{{{$/;"	f
 read_input_options	sharedfuncs.sh	/^  read_input_options() { #{{{$/;"	f
 read_input_text	sharedfuncs.sh	/^  read_input_text() { #{{{$/;"	f
-reconfigure_system	lilo	/^reconfigure_system(){$/;"	f
 replace_line	sharedfuncs.sh	/^  replace_line() { #{{{$/;"	f
-root_password	001-install-arch	/^root_password(){$/;"	f
-root_password	fifo	/^root_password(){$/;"	f
 run_as_user	sharedfuncs.sh	/^  run_as_user() { #{{{$/;"	f
-select_device	001-install-arch	/^select_device(){$/;"	f
-select_device	fifo	/^select_device(){$/;"	f
-select_editor	001-install-arch	/^select_editor(){$/;"	f
-select_editor	fifo	/^select_editor(){$/;"	f
-select_filesystem	001-install-arch	/^  select_filesystem(){$/;"	f
-select_filesystem	fifo	/^  select_filesystem(){$/;"	f
-select_keymap	001-install-arch	/^select_keymap(){$/;"	f
-select_keymap	fifo	/^select_keymap(){$/;"	f
-select_linux_version	001-install-arch	/^select_linux_version() {$/;"	f
-select_linux_version	fifo	/^select_linux_version() {$/;"	f
-select_user	002-install-chroot	/^select_user(){$/;"	f
-select_user	lilo	/^select_user(){$/;"	f
-set_efi_partition	001-install-arch	/^  set_efi_partition(){$/;"	f
-set_efi_partition	fifo	/^  set_efi_partition(){$/;"	f
 setlocale	sharedfuncs.sh	/^  setlocale() { #{{{$/;"	f
 settimezone	sharedfuncs.sh	/^  settimezone() { #{{{$/;"	f
-setup_alt_dns	001-install-arch	/^setup_alt_dns(){$/;"	f
-setup_alt_dns	fifo	/^setup_alt_dns(){$/;"	f
-setup_luks	001-install-arch	/^setup_luks(){$/;"	f
-setup_luks	fifo	/^setup_luks(){$/;"	f
-setup_lvm	001-install-arch	/^setup_lvm(){$/;"	f
-setup_lvm	fifo	/^setup_lvm(){$/;"	f
 spinny	sharedfuncs.sh	/^  spinny() { #{{{$/;"	f
 start_module	sharedfuncs.sh	/^  start_module() { #{{{$/;"	f
 system_ctl	sharedfuncs.sh	/^  system_ctl() { #{{{$/;"	f
 system_update	sharedfuncs.sh	/^  system_update() { #{{{$/;"	f
-umount_partitions	001-install-arch	/^umount_partitions(){$/;"	f
-umount_partitions	fifo	/^umount_partitions(){$/;"	f
 update_early_modules	sharedfuncs.sh	/^  update_early_modules() { #{{{$/;"	f
 use_all_cores	000-use-all-cores-makepkg-conf.sh	/^use_all_cores(){$/;"	f
-welcome	002-install-chroot	/^welcome(){$/;"	f
-welcome	lilo	/^welcome(){$/;"	f

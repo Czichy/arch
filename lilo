@@ -805,7 +805,7 @@ install_desktop_environment(){
     #   source sharedfuncs_elihw
     # done
 
-  } #}}}
+   #}}}
   # install_themes() { #{{{
   #   while true
   #   do

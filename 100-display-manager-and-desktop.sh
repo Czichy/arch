@@ -5,17 +5,17 @@
 #
 ##################################################################################################################
 
-#if [[ -f `pwd`/sharedfuncs ]]; then
-#  source sharedfuncs
-#else
-#  echo "missing file: sharedfuncs"
-#exit 1
-#fi
+if [[ -f `pwd`/sharedfuncs.sh ]]; then
+  source sharedfuncs.sh
+else
+  echo "missing file: sharedfuncs"
+exit 1
+fi
 
 
   install_misc_apps() { #{{{
       print_title "$1 ESSENTIAL APPS"
-            install_display_manager
+            #install_display_manager
             package_install "arandr"
             package_install "awesome-terminal-fonts"
             package_install "imagemagick"
@@ -69,7 +69,7 @@ install_display_manager() { #{{{
       print_title "i3 - https://wiki.archlinux.org/index.php/I3"
       print_info "i3 is a dynamic tiling window manager inspired by wmii that is primarily targeted at developers and advanced users. The stated goals for i3 include clear documentation, proper multi-monitor support, a tree structure for windows, and different modes like in vim."
       #sudo pacman -S --noconfirm --needed i3status
-      aur_package_install "i3-gaps-next-git"
+      package_install "i3-gaps"
       package_install "rofi"
       aur_package_install "i3status-rust-git"
       # config xinitrc
