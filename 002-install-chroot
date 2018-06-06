@@ -1015,7 +1015,7 @@ choose_aurhelper
 
         checklist[12]=1
 
-        install_extra
+        #install_extra
         checklist[13]=1
 
         clean_orphan_packages
