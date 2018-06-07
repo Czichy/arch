@@ -6,7 +6,7 @@ git clone https://github.com/czichy/arch
 cd arch
 
 lsblk
-mkfs.btrfs -m single -L arch /dev/sdb2
+mkfs.btrfs -m single -f -L arch /dev/sdb2
 mount -o compress=lzo /dev/sdb2 /mnt
 cd /mnt
 
@@ -28,10 +28,11 @@ mount -o noatime,ssd,compress=lzo,space_cache=v2,subvol=@log /dev/sdb2 /mnt/var/
 mount -o noatime,ssd,compress=lzo,space_cache=v2,subvol=@pkg /dev/sdb2 /mnt/var/cache/pacman/pkg
 mount -o noatime,ssd,compress=lzo,space_cache=v2,subvolid=5 /dev/sdb2 /mnt/btrfs
 mount /dev/sdb128 /mtn/boot
-swapon /dev/sda3
+swapon /dev/sdb1
 df -Th
 
 #pacstrap /mnt base base-devel btrfs-progs bash-completion snapper vim
 
 #genfstab -U /mnt >> /mnt/etc/fstab
-001-install-arch
+cd ~/arch
+bash 001-install-arch
