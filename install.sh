@@ -20,7 +20,7 @@ cd /
 umount /mnt
 mount -o noatime,ssd,compress=lzo,space_cache=v2,subvol=@ /dev/sdb2 /mnt
 cd /mnt
-mkdir -p {boot,home,.snapshot,btrfs,var/{log,cache/pacman/pkg}
+mkdir -p {boot,home,.snapshot,btrfs,var/{log,cache/pacman/pkg}}
 
 mount -o noatime,ssd,compress=lzo,space_cache=v2,subvol=@home /dev/sdb2 /mnt/home
 mount -o noatime,ssd,compress=lzo,space_cache=v2,subvol=@snapshots /dev/sdb2 /mnt/.snapshots
@@ -33,6 +33,7 @@ df -Th
 
 #pacstrap /mnt base base-devel btrfs-progs bash-completion snapper vim
 
-#genfstab -U /mnt >> /mnt/etc/fstab
+genfstab -U /mnt >> /mnt/etc/fstab
 cd ~/arch
+vim /mnt/etc/fstab
 bash 001-install-arch
