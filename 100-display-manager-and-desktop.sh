@@ -4,7 +4,6 @@
 #   DO NOT JUST RUN THIS. EXAMINE AND JUDGE. RUN AT YOUR OWN RISK.
 #
 ##################################################################################################################
-
 #if [[ -f `pwd`/sharedfuncs.sh ]]; then
 #  source sharedfuncs.sh
 #else
@@ -74,32 +73,10 @@ install_display_manager() { #{{{
       aur_package_install "i3status-rust-git"
       # config xinitrc
       config_xinitrc "i3"
+      install_misc_apps "i3"
       # distro specific
       #aur_package_install "i3blocks"
       #}}}
-   # 13)
-      #OPENBOX {{{
-      # print_title "OPENBOX - http://wiki.archlinux.org/index.php/Openbox"
-      # print_info "Openbox is a lightweight and highly configurable window manager with extensive standards support."
-      # package_install "obconf obmenu menumaker"
-      # package_install "lxappearance"
-      # package_install "leafpad epdfview nitrogen"
-      # aur_package_install "openbox-patched"
-      # mkdir -p /home/${username}/.config/openbox/
-      # cp /etc/xdg/openbox/{menu.xml,rc.xml,autostart} /home/${username}/.config/openbox/
-      # chown -R ${username}:users /home/${username}/.config
-      # # config xinitrc
-      # config_xinitrc "openbox-session"
-      # # distro specific
-      # package_install "gsimplecal"
-      # package_install "oblogout"
-      # aur_package_install "gtk2-perl"
-      # aur_package_install "obkey"
-      # aur_package_install "obmenu3"
-      # aur_package_install "obmenu-generator"
-      # aur_package_install "openbox-arc-git"
-      # aur_package_install "perl-linux-desktopfiles"
-      install_misc_apps "OPENBOX"
 
       #}}}
   #COMMON PKGS {{{
@@ -127,3 +104,4 @@ install_display_manager() { #{{{
     add_line "fs.inotify.max_user_watches = 524288" "/etc/sysctl.d/99-sysctl.conf"
   #}}}
 }
+#install_display_managers

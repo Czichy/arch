@@ -33,7 +33,7 @@ df -Th
 
 #pacstrap /mnt base base-devel btrfs-progs bash-completion snapper vim
 
-genfstab -U /mnt >> /mnt/etc/fstab
+#genfstab -t PARTUUID -p /mnt >> /mnt/etc/fstab
 cd ~/arch
-vim /mnt/etc/fstab
 bash 001-install-arch
+vim /mnt/etc/fstab
