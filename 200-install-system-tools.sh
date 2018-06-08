@@ -62,7 +62,7 @@ install_system_apps(){
         package_install "termite"
         package_install "thunar-archive-plugin"
         package_install "thunar-volman"
-	      package_install "mc"
+	package_install "mc"
 
         #sh AUR/install-caffeine-ng-v*.sh
         aur_package_install "conky-lua-archers"
@@ -72,12 +72,12 @@ install_system_apps(){
 	package_install "cmake freetype2 fontconfig pkg-config make xclip"
 	aur_package_install "alacritty-scrollback-git"
 	#install powerline
-	package_install "powerline powerline-fonts"
-	echo
-	"powerline-daemon -q
-	POWERLINE_BASH_CONTINUATION=1
-	POWERLINE_BASH_SELECT=1
-	. /usr/lib/python3.6/site-packages/powerline/bindings/bash/powerline.sh" > ~/.bashrc
+	#package_install "powerline powerline-fonts"
+	#echo
+	#"powerline-daemon -q
+	#POWERLINE_BASH_CONTINUATION=1
+	#POWERLINE_BASH_SELECT=1
+	#. /usr/lib/python3.6/site-packages/powerline/bindings/bash/powerline.sh" > ~/.bashrc
 
 	rmmod pcspkr
 
