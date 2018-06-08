@@ -5,12 +5,12 @@
 #
 ##################################################################################################################
 
-if [[ -f `pwd`/sharedfuncs.sh ]]; then
-  source sharedfuncs.sh
-else
-  echo "missing file: sharedfuncs"
-exit 1
-fi
+#if [[ -f `pwd`/sharedfuncs.sh ]]; then
+#  source sharedfuncs.sh
+#else
+#  echo "missing file: sharedfuncs"
+#exit 1
+#fi
 
 
   install_misc_apps() { #{{{

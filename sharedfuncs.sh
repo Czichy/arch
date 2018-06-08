@@ -344,6 +344,15 @@
   start_module() { #{{{
     modprobe $1
   } #}}}
+  load_script() {
+	if [[ -f `pwd`/$1 ]]; then
+ 		source $1
+	else
+  		echo "missing file: "$1
+  		exit 1
+	fi
+  }  
+
   add_module() { #{{{
     for module in $1; do
       #check if the name of the module can be the same of the module or the given name
