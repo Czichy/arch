@@ -81,7 +81,106 @@ install_system_apps(){
 
 	rmmod pcspkr
 
+#ACCESSORIES {{{
+         package_install "catfish"
+         aur_package_install "conky-lua"
+         package_install "lm_sensors"
+         sensors-detect --auto
+         package_install "docky"
+         aur_package_install "dockmanager"
+         package_install "galculator"
+         #aur_package_install "pamac-aur"
+         aur_package_install "pyrenamer"
+         aur_package_install "enpass-bin"
+         if [[ ${KDE} -eq 1 ]]; then
+            aur_package_install "hotshots"
+          else
+            aur_package_install "shutter"
+          fi
+         package_install "synapse"
+         aur_package_install "tilix-bin"
+         package_install "terminator"
+         aur_package_install "unified-remote-server"
+         system_ctl enable urserver
+#}}}
 
+#DEVELOPEMENT {{{
+         package_remove "vim"
+         package_install "gvim ctags"
+         package_install "meld"
+         aur_package_install "android-sdk android-sdk-platform-tools android-sdk-build-tools android-platform"
+         package_install "android-tools android-udev libmtp"
+           add_user_to_group ${username} sdkusers
+           chown -R :sdkusers /opt/android-sdk/
+           chmod -R g+w /opt/android-sdk/
+           add_line "export ANDROID_HOME=/opt/android-sdk" "/home/${username}/.bashrc"
+           aur_package_install "android-studio"
+         package_install "intellij-idea-community-edition"
+         aur_package_install "jdk"
+         package_install "nodejs"
+         aur_package_install "visual-studio-code-bin"
+         aur_package_install "gitg"
+         aur_package_install "qgit"     
+         aur_package_install "kdiff3"
+         aur_package_install "regexxer"
+	 package_install "rustup"
+	 rustup install stable
+	 rustup install nightly && rustup default nightly
+#}}}
+#INTERNET {{{
+    print_title "INTERNET APPS"
+            print_title "BROWSER"
+            	  aur_package_install "google-chrome"
+                  package_install "firefox firefox-i18n-$LOCALE_FF"
+                  aur_package_install "vivaldi"
+            print_title "DOWNLOAD|FILESHARE"
+            	  aur_package_install "aerofs"
+                  aur_package_install "rslsync"
+                  package_install "deluge"
+                  aur_package_install "dropbox"
+                  aur_package_install "flareget"
+                  aur_package_install "jdownloader"
+                  package_install "qbittorrent"
+                  package_install "sparkleshare"
+                  aur_package_install "spideroak"
+                  if [[ ${KDE} -eq 1 ]]; then
+                    package_install "transmission-qt"
+                  else
+                    package_install "transmission-gtk"
+                  fi
+                  if [[ -f /home/${username}/.config/transmission/settings.json ]]; then
+                    replace_line '"blocklist-enabled": false' '"blocklist-enabled": true' /home/${username}/.config/transmission/settings.json
+                    replace_line "www\.example\.com\/blocklist" "list\.iblocklist\.com\/\?list=bt_level1&fileformat=p2p&archiveformat=gz" /home/${username}/.config/transmission/settings.json
+                  fi
+                  package_install "uget"
+                  package_install "youtube-dl"
+                  aur_package_install "tixati"
+                  aur_package_install "google-drive-ocamlfuse"
+            print_title "MAPPING TOOLS"
+                  aur_package_install "google-earth"
+            print_title "DESKTOP SHARE"
+                  aur_package_install "teamviewer"
+
+#}}}
+#THEMES {{{
+  aur_package_install "neofetch"
+  aur_package_install "screenkey"
+  aur_package_install "vim-gruvbox-git vim-airline-gruvbox-git"
+
+  #fonts
+  aur_package_install "ttf-fantasque-sans-git"
+  
+  aur_package_install "ttf-font-awesome"
+  aur_package_install "ttf-mac-fonts"
+  aur_package_install "otf-fira-code"
+  aur_package_install "virtualbox-for-linux-kernel"
+  aur_package_install "xcursor-breeze"
+
+  aur_package_install "vim-apprentice"
+# these come last always
+  aur_package_install "hardcode-fixer-git"
+  sudo hardcode-fixer
+#}}}
     echo "################################################################"
     echo "####    System tools installed                            ######"
     echo "################################################################"

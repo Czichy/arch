@@ -25,22 +25,22 @@ else
   exit 1
 fi
 set -e
-load_script "000-use-all-cores-makepkg-conf.sh"
-load_script "100-display-manager-and-desktop.sh"
-load_script "110-install-sound.sh"
-load_script "130-install-printers.sh"
-load_script "140-install-samba.sh"
-# install apps
-load_script "200-install-system-tools.sh"
-load_script "201-install-development-apps.sh"
-load_script "202-install-internet-apps.sh"
-load_script "203-install-accessories-apps.sh"
-
-load_script "300-install-themes.sh"
-#load_script "400-install-cloud-storage.sh"
-#load_script "600-install-Arco.sh"
-load_script "700-install-fonts.sh"
-
+#load_script "000-use-all-cores-makepkg-conf.sh"
+#load_script "100-display-manager-and-desktop.sh"
+#load_script "110-install-sound.sh"
+#load_script "130-install-printers.sh"
+#load_script "140-install-samba.sh"
+## install apps
+#load_script "200-install-system-tools.sh"
+#load_script "201-install-development-apps.sh"
+#load_script "202-install-internet-apps.sh"
+#load_script "203-install-accessories-apps.sh"
+#
+#load_script "300-install-themes.sh"
+##load_script "400-install-cloud-storage.sh"
+##load_script "600-install-Arco.sh"
+#load_script "700-install-fonts.sh"
+#
 #ARCHLINUX U INSTALL {{{
 #1 - WELCOME {{{
 welcome(){
@@ -66,10 +66,48 @@ welcome(){
   echo ""
 }
 #}}}
+use_all_cores(){
+  numberofcores=$(grep -c ^processor /proc/cpuinfo)
+
+
+  case $numberofcores in
+
+      8)
+          echo "You have " $numberofcores" cores."
+          echo "Changing the makeflags for "$numberofcores" cores."
+          sudo sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j9"/g' /etc/makepkg.conf
+          echo "Changing the compression settings for "$numberofcores" cores."
+          sudo sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T 8 -z -)/g' /etc/makepkg.conf
+          ;;
+      4)
+          echo "You have " $numberofcores" cores."
+          echo "Changing the makeflags for "$numberofcores" cores."
+          sudo sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j5"/g' /etc/makepkg.conf
+          echo "Changing the compression settings for "$numberofcores" cores."
+          sudo sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T 4 -z -)/g' /etc/makepkg.conf
+          ;;
+      2)
+          echo "You have " $numberofcores" cores."
+          echo "Changing the makeflags for "$numberofcores" cores."
+          sudo sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j3"/g' /etc/makepkg.conf
+          echo "Changing the compression settings for "$numberofcores" cores."
+          sudo sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T 2 -z -)/g' /etc/makepkg.conf
+          ;;
+      *)
+          echo "We do not know how many cores you have."
+          echo "Do it manually."
+          ;;
+
+  esac
+
+  echo "################################################################"
+  echo "###  All cores will be used during building and compression ####"
+  echo "################################################################"
+}
 #LOCALE SELECTOR {{{
 language_selector(){
   #AUTOMATICALLY DETECTS THE SYSTEM LOCALE {{{
-  #automatically detects the system language based on your locale
+#automatically detects the system language based on your locale
   LOCALE=de_DE#`locale | grep LANG | sed 's/LANG=//' | cut -c1-5`
   #KDE #{{{
     LOCALE_KDE=`echo $LOCALE | cut -d\_ -f1`
@@ -645,6 +683,332 @@ install_nm_wicd(){
       system_ctl enable NetworkManager.service
 }
 #}}}
+  install_misc_apps() { #{{{
+      print_title "$1 ESSENTIAL APPS"
+            #install_display_manager
+            package_install "arandr"
+            package_install "awesome-terminal-fonts"
+            package_install "imagemagick"
+            package_install "compton"
+            package_install "lxappearance"
+            package_install "lxrandr"
+            package_install "nitrogen"
+            package_install "rofi"
+            package_install "slim"
+            package_install "volumeicon"
+            package_install "w3m"
+            package_install "xorg-xrandr"
+            package_install "xfce4-appfinder"
+            package_install "xfce4-notifyd"
+            package_install "xfce4-power-manager"
+            package_install "xfce4-settings"
+            package_install "xfce4-screenshooter"
+            package_install "xfce4-taskmanager"
+            package_install "dmenu"
+            package_install "feh"
+            package_install "viewnior"
+            package_install "gmrun"
+            package_install "rxvt-unicode"
+            aur_package_install "squeeze-git"
+            package_install "thunar tumbler"
+            package_install "tint2"
+            package_install "volwheel"
+            package_install "xfburn"
+            package_install "xcompmgr transset-df"
+            package_install "zathura"
+            package_install "speedtest-cli"
+            aur_package_install "yad"
+	    aur_package_install "skippy-xd-git"
+  } #}}}
+
+install_display_manager() { #{{{
+      print_title "DISPLAY MANAGER - https://wiki.archlinux.org/index.php/Display_Manager"
+      print_info "A display manager, or login manager, is a graphical interface screen that is displayed at the end of the boot process in place of the default shell."
+
+      #package_install "lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings"
+      #system_ctl enable lightdm
+      #sudo systemctl enable lightdm.service -f
+      #sudo systemctl set-default graphical.target
+
+
+
+  print_title "DESKTOP ENVIRONMENT|WINDOW MANAGER"
+  print_info "A DE provide a complete GUI for a system by bundling together a variety of X clients written using a common widget toolkit and set of libraries.\n\nA window manager is one component of a system's graphical user interface."
+
+   #I3 {{{
+      print_title "i3 - https://wiki.archlinux.org/index.php/I3"
+      print_info "i3 is a dynamic tiling window manager inspired by wmii that is primarily targeted at developers and advanced users. The stated goals for i3 include clear documentation, proper multi-monitor support, a tree structure for windows, and different modes like in vim."
+      #sudo pacman -S --noconfirm --needed i3status
+      package_install "i3-gaps"
+      package_install "rofi"
+      aur_package_install "i3status-rust-git"
+      # config xinitrc
+      config_xinitrc "i3"
+      install_misc_apps "i3"
+      # distro specific
+      #aur_package_install "i3blocks"
+      #}}}
+
+      #}}}
+  #COMMON PKGS {{{
+    #MTP SUPPORT {{{
+    if is_package_installed "libmtp" ; then
+      package_install "gvfs-mtp"
+    fi
+    #}}}
+    if [[ ${KDE} -eq 0 ]]; then
+      package_install "gvfs gvfs-goa gvfs-afc gvfs-mtp gvfs-google"
+      package_install "xdg-user-dirs-gtk"
+      package_install "pavucontrol"
+      package_install "ttf-bitstream-vera ttf-dejavu"
+      aur_package_install "gnome-defaults-list"
+      is_package_installed "cups" && package_install "system-config-printer gtk3-print-backends"
+      is_package_installed "samba" && package_install "gvfs-smb"
+    fi
+  #}}}
+  #COMMON CONFIG {{{
+    # speed up application startup
+    mkdir -p ~/.compose-cache
+    # D-Bus interface for user account query and manipulation
+    system_ctl enable accounts-daemon
+    # Improvements
+    add_line "fs.inotify.max_user_watches = 524288" "/etc/sysctl.d/99-sysctl.conf"
+  #}}}
+  #COMMON CONFIG {{{
+    # speed up application startup
+    mkdir -p ~/.compose-cache
+    # D-Bus interface for user account query and manipulation
+    system_ctl enable accounts-daemon
+    # Improvements
+    add_line "fs.inotify.max_user_watches = 524288" "/etc/sysctl.d/99-sysctl.conf"
+  #}}}
+}
+
+#SOUND SETUP {{{
+install_sound(){
+    print_title "PULSEAUDIO - https://wiki.archlinux.org/index.php/Pulseaudio"
+    print_info "PulseAudio is the default sound server that serves as a proxy to sound applications using existing kernel sound components like ALSA or OSS"
+    sudo pacman -S pulseaudio --noconfirm --needed
+    sudo pacman -S pulseaudio-alsa --noconfirm --needed
+    sudo pacman -S pavucontrol  --noconfirm --needed
+
+    print_title "ALSA - https://wiki.archlinux.org/index.php/Alsa"
+    print_info "The Advanced Linux Sound Architecture (ALSA) is a Linux kernel component intended to replace the original Open Sound System (OSSv3) for providing device drivers for sound cards."
+
+    sudo pacman -S alsa-utils alsa-plugins alsa-lib alsa-firmware --noconfirm --needed
+    sudo pacman -S gstreamer --noconfirm --needed
+    sudo pacman -S gst-plugins-good gst-plugins-bad gst-plugins-base gst-plugins-ugly --noconfirm --needed
+    sudo pacman -S volumeicon --noconfirm --needed
+    sudo pacman -S playerctl --noconfirm --needed
+
+    echo "################################################################"
+    echo "#########   sound software software installed   ################"
+    echo "################################################################"
+}
+#}}}
+
+#CUPS {{{
+install_cups(){
+    print_title "CUPS - https://wiki.archlinux.org/index.php/Cups"
+    print_info "CUPS is the standards-based, open source printing system developed by Apple Inc. for Mac OS X and other UNIX-like operating systems."
+
+    sudo pacman -S --noconfirm --needed cups cups-pdf
+
+    #first try if you can print without footmatic
+    #sudo pacman -S foomatic-db-engine --noconfirm --needed
+    #sudo pacman -S foomatic-db foomatic-db-ppds foomatic-db-nonfree-ppds foomatic-db-gutenprint-ppds --noconfirm --needed
+    sudo pacman -S ghostscript gsfonts gutenprint --noconfirm --needed
+    sudo pacman -S gtk3-print-backends --noconfirm --needed
+    sudo pacman -S libcups --noconfirm --needed
+    sudo pacman -S hplip --noconfirm --needed
+    sudo pacman -S system-config-printer --noconfirm --needed
+
+    sudo systemctl enable org.cups.cupsd.service
+
+    echo "After rebooting it will work"
+
+    echo "################################################################"
+    echo "#########   printer management software installed     ##########"
+    echo "################################################################"
+ }
+#}}}
+
+#SAMBA {{{
+install_samba(){
+    sudo pacman -S --noconfirm --needed samba
+    sudo wget "https://git.samba.org/samba.git/?p=samba.git;a=blob_plain;f=examples/smb.conf.default;hb=HEAD" -O /etc/samba/smb.conf.original
+    sudo wget "https://raw.githubusercontent.com/arcolinux/arcolinux-iso/master/archiso/airootfs/etc/samba/smb.conf" -O /etc/samba/smb.conf
+    sudo systemctl enable smbd.service
+    sudo systemctl start smbd.service
+    sudo systemctl enable nmbd.service
+    sudo systemctl start nmbd.service
+
+    ##Change your username here
+    read -p "What is your login? It will be used to add this user to smb : " choice
+    sudo smbpasswd -a $choice
+
+    #access samba share windows
+    sudo pacman -S --noconfirm --needed gvfs-smb
+
+
+    # sudo systemctl restart ... if you run into trouble
+    # testparm will check the conf file for errors
+
+    # red hat samba sharing config
+
+    # echo "################################################################"
+    # echo "system-config-samba"
+    # echo "################################################################"
+    #
+    #
+    # package="system-config-samba"
+    #
+    # #----------------------------------------------------------------------------------
+    #
+    # #checking if application is already installed or else install with aur helpers
+    # if pacman -Qi $package &> /dev/null; then
+    #
+    # 	echo "################################################################"
+    # 	echo "################## "$package" is already installed"
+    # 	echo "################################################################"
+    #
+    # else
+    #
+    # 	#checking which helper is installed
+    # 	if pacman -Qi packer &> /dev/null; then
+    #
+    # 		echo "Installing with packer"
+    # 		packer -S --noconfirm --noedit  $package
+    #
+    # 	elif pacman -Qi pacaur &> /dev/null; then
+    #
+    # 		echo "Installing with pacaur"
+    # 		pacaur -S --noconfirm --noedit  $package
+    #
+    # 	elif pacman -Qi yaourt &> /dev/null; then
+    #
+    # 		echo "Installing with yaourt"
+    # 		yaourt -S --noconfirm $package
+    #
+    # 	fi
+    #
+    # 	# Just checking if installation was successful
+    # 	if pacman -Qi $package &> /dev/null; then
+    #
+    # 	echo "################################################################"
+    # 	echo "#########  "$package" has been installed"
+    # 	echo "################################################################"
+    #
+    # 	else
+    #
+    # 	echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    # 	echo "!!!!!!!!!  "$package" has NOT been installed"
+    # 	echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    #
+    #
+    # 	fi
+    #
+    # fi
+    #
+    #
+    #
+    #
+    #
+    # echo "Run system-config-samba to set up shares"
+    # echo "You will be able to connect to this computer with the login and password you created"
+    # echo "You will need to edit /etc/samba/smb.conf"
+    # echo "Scroll down to bottom"
+    # echo "Example code is in there"
+    # echo "Create a folder with name 'SHARED' in your homefolder."
+    # echo "Make sure you delete all the ; in those lines."
+    # echo "Reboot and enjoy"
+
+    echo "################################################################"
+    echo "#########   samba  software installed           ################"
+    echo "################################################################"
+    }
+#}}}
+#SYSTEM TOOLS {{{
+install_system_apps(){
+    print_title "SYSTEM TOOLS APPS"
+    package_install "clamav"
+          cp /etc/clamav/clamd.conf.sample /etc/clamav/clamd.conf
+          cp /etc/clamav/freshclam.conf.sample /etc/clamav/freshclam.conf
+          sed -i '/Example/d' /etc/clamav/freshclam.conf
+          sed -i '/Example/d' /etc/clamav/clamd.conf
+          system_ctl enable clamd
+          freshclam
+    	aur_package_install "cockpit storaged linux-user-chroot ostree"
+        aur_package_install "webmin"
+        package_install "docker"
+        add_user_to_group ${username} docker
+        is_package_installed "ufw" && package_remove "ufw"
+        is_package_installed "firewalld" && package_remove "firewalld"
+        package_install "firewalld"
+        system_ctl enable firewalld
+        package_install "gparted"
+        package_install "grsync"
+        aur_package_install "hosts-update"
+        hosts-update
+        package_install "htop"
+        aur_package_install "plex-media-server"
+        system_ctl enable plexmediaserver.service
+        print_title "UFW - https://wiki.archlinux.org/index.php/Ufw"
+        print_info "Ufw stands for Uncomplicated Firewall, and is a program for managing a netfilter firewall. It provides a command line interface and aims to be uncomplicated and easy to use."
+        is_package_installed "firewalld" && package_remove "firewalld"
+        aur_package_install "ufw gufw"
+        system_ctl enable ufw.service
+        aur_package_install "unified-remote-server"
+        system_ctl enable urserver.service
+          #Make sure we are not a VirtualBox Guest
+          VIRTUALBOX_GUEST=`dmidecode --type 1 | grep VirtualBox`
+          if [[ -z ${VIRTUALBOX_GUEST} ]]; then
+            package_install "virtualbox virtualbox-host-dkms virtualbox-guest-iso linux-headers"
+            aur_package_install "virtualbox-ext-oracle"
+            add_user_to_group ${username} vboxusers
+            modprobe vboxdrv vboxnetflt
+          else
+            cecho "${BBlue}[${Reset}${Bold}!${BBlue}]${Reset} VirtualBox was not installed as we are a VirtualBox guest."
+          fi
+        package_install "icoutils wine wine_gecko wine-mono winetricks"
+        package_install "netdata"
+        system_ctl enable netdata.service
+        package_install "nload"
+        package_install "gnome-logs"
+        package_install "gnome-disk-utility"
+        package_install "polkit-gnome"
+        package_install "qjournalctl"
+        package_install "pacmanlogviewer"
+        package_install "seahorse"
+        package_install "thunar"
+        package_install "termite"
+        package_install "thunar-archive-plugin"
+        package_install "thunar-volman"
+	package_install "mc"
+
+        #sh AUR/install-caffeine-ng-v*.sh
+        aur_package_install "conky-lua-archers"
+        aur_package_install "discord"
+        aur_package_install "mintstick-git"
+        aur_package_install "temps"
+	package_install "cmake freetype2 fontconfig pkg-config make xclip"
+	aur_package_install "alacritty-scrollback-git"
+	#install powerline
+	#package_install "powerline powerline-fonts"
+	#echo
+	#"powerline-daemon -q
+	#POWERLINE_BASH_CONTINUATION=1
+	#POWERLINE_BASH_SELECT=1
+	#. /usr/lib/python3.6/site-packages/powerline/bindings/bash/powerline.sh" > ~/.bashrc
+
+	rmmod pcspkr
+
+
+    echo "################################################################"
+    echo "####    System tools installed                            ######"
+    echo "################################################################"
+    }
+ #}}}
 #OFFICE {{{
 install_office_apps(){
           # if [[ ${KDE} -eq 1 ]]; then
