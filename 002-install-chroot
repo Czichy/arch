@@ -24,7 +24,7 @@ else
   echo "missing file: sharedfuncs.sh"
   exit 1
 fi
-set -e
+#set -e
 #load_script "000-use-all-cores-makepkg-conf.sh"
 #load_script "100-display-manager-and-desktop.sh"
 #load_script "110-install-sound.sh"
