@@ -1,11 +1,11 @@
 #!/bin/bash
-#set -e
-# if [[ -f `pwd`/sharedfuncs ]]; then
-#   source sharedfuncs
-# else
-#   echo "missing file: sharedfuncs"
-#   exit 1
-# fi
+set -e
+ if [[ -f `pwd`/sharedfuncs ]]; then
+   source sharedfuncs
+ else
+   echo "missing file: sharedfuncs"
+   exit 1
+ fi
 #THEMES {{{
 install_themes(){
   #aur_package_install "arc-gtk-theme-git"
@@ -42,3 +42,4 @@ echo "####    Software from Arch Linux Repository installed     ######"
 echo "################################################################"
 }
 #}}}
+install_themes

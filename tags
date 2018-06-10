@@ -147,6 +147,7 @@ install_cups	002-install-chroot	/^install_cups(){$/;"	f
 install_cups	130-install-printers.sh	/^install_cups(){$/;"	f
 install_cups	lilo	/^install_cups(){$/;"	f
 install_desktop_environment	lilo	/^install_desktop_environment(){$/;"	f
+install_development_apps	002-install-chroot	/^install_development_apps(){$/;"	f
 install_development_apps	201-install-development-apps.sh	/^install_development_apps(){$/;"	f
 install_development_apps	lilo	/^install_development_apps(){$/;"	f
 install_display_manager	002-install-chroot	/^install_display_manager() { #{{{$/;"	f
@@ -188,6 +189,7 @@ install_ssh	lilo	/^install_ssh(){$/;"	f
 install_system_apps	002-install-chroot	/^install_system_apps(){$/;"	f
 install_system_apps	200-install-system-tools.sh	/^install_system_apps(){$/;"	f
 install_system_apps	lilo	/^install_system_apps(){$/;"	f
+install_themes	002-install-chroot	/^install_themes(){$/;"	f
 install_themes	300-install-themes.sh	/^install_themes(){$/;"	f
 install_tlp	002-install-chroot	/^install_tlp(){$/;"	f
 install_tlp	lilo	/^install_tlp(){$/;"	f

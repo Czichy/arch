@@ -150,97 +150,7 @@ select_user(){
   configure_user_account(){
     #BASHRC {{{
     print_title "BASHRC - https://wiki.archlinux.org/index.php/Bashrc"
-    bashrc_list=("Get helmuthdu .bashrc from github" "Vanilla .bashrc" "Get personal .bashrc from github");
-    PS3="$prompt1"
-    echo -e "Choose your .bashrc\n"
-    select OPT in "${bashrc_list[@]}"; do
-      case "$REPLY" in
-        1)
-          package_install "git"
-          package_install "colordiff"
-          git clone https://github.com/helmuthdu/dotfiles
-          cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc ~/
-          cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc /home/${username}/
-          rm -fr dotfiles
-          ;;
-        2)
           cp /etc/skel/.bashrc /home/${username}
-          ;;
-        3)
-          package_install "git"
-          read -p "Enter your github username [ex: helmuthdu]: " GITHUB_USER
-          read -p "Enter your github repository [ex: aui]: " GITHUB_REPO
-          git clone https://github.com/$GITHUB_USER/$GITHUB_REPO
-          cp -R $GITHUB_REPO/.* /home/${username}/
-          rm -fr $GITHUB_REPO
-          ;;
-        *)
-          invalid_option
-          ;;
-      esac
-      [[ -n $OPT ]] && break
-    done
-    #}}}
-    #EDITOR {{{
-    print_title "DEFAULT EDITOR"
-    editors_list=("emacs" "nano" "vi" "vim" "neovim" "zile");
-    PS3="$prompt1"
-    echo -e "Select editor\n"
-    select EDITOR in "${editors_list[@]}"; do
-      if contains_element "$EDITOR" "${editors_list[@]}"; then
-        if [[ $EDITOR == vim || $EDITOR == neovim ]]; then
-          [[ $EDITOR == vim ]] && (! is_package_installed "gvim" && package_install "vim ctags") || package_install "neovim python2-neovim python-neovim"
-          #VIMRC {{{
-          if [[ ! -f /home/${username}/.vimrc ]]; then
-            vimrc_list=("Get helmuthdu .vimrc from github" "Vanilla .vimrc" "Get personal .vimrc from github");
-            PS3="$prompt1"
-            echo -e "Choose your .vimrc\n"
-            select OPT in "${vimrc_list[@]}"; do
-              case "$REPLY" in
-                1)
-                  package_install "git"
-                  git clone https://github.com/helmuthdu/vim /home/${username}/.vim
-                  ln -sf /home/${username}/.vim/vimrc /home/${username}/.vimrc
-                  cp -R vim /home/${username}/.vim/fonts /home/${username}/.fonts
-                  GRUVBOX_NEEDED=1
-                  ;;
-                3)
-                  package_install "git"
-                  read -p "Enter your github username [ex: helmuthdu]: " GITHUB_USER
-                  read -p "Enter your github repository [ex: vim]: " GITHUB_REPO
-                  git clone https://github.com/$GITHUB_USER/$GITHUB_REPO
-                  cp -R $GITHUB_REPO/.vim /home/${username}/
-                  if [[ -f $GITHUB_REPO/vimrc ]]; then
-                    ln -sf /home/${username}/.vim/vimrc /home/${username}/.vimrc
-                  else
-                    ln -sf /home/${username}/.vim/.vimrc /home/${username}/.vimrc
-                  fi
-                  rm -fr $GITHUB_REPO
-                  ;;
-                2)
-                  echo "Nothing to do..."
-                  ;;
-                *)
-                  invalid_option
-                  ;;
-              esac
-              [[ -n $OPT ]] && break
-            done
-          fi
-          if [[ $EDITOR == neovim  && ! -f /home/${username}/.config/nvim ]]; then
-            mkdir ~/.config
-            ln -s ~/.vim ~/.config/nvim
-            ln -s ~/.vimrc ~/.config/nvim/init.vim
-          fi
-          #}}}
-        else
-          package_install "$EDITOR"
-        fi
-        break
-      else
-        invalid_option
-      fi
-    done
     #}}}
     chown -R ${username}:users /home/${username}
   }
@@ -425,6 +335,7 @@ install_zsh(){
       fi
     package_install "zsh-autosuggestions"
     aur_package_install "antigen-git"
+    aur_package_install "spaceship-prompt-git"
     aur_package_install "prezto-git"
     aur_package_install "fzf"
 
@@ -993,14 +904,6 @@ install_system_apps(){
         aur_package_install "temps"
 	package_install "cmake freetype2 fontconfig pkg-config make xclip"
 	aur_package_install "alacritty-scrollback-git"
-	#install powerline
-	#package_install "powerline powerline-fonts"
-	#echo
-	#"powerline-daemon -q
-	#POWERLINE_BASH_CONTINUATION=1
-	#POWERLINE_BASH_SELECT=1
-	#. /usr/lib/python3.6/site-packages/powerline/bindings/bash/powerline.sh" > ~/.bashrc
-
 	rmmod pcspkr
 
 
@@ -1009,25 +912,34 @@ install_system_apps(){
     echo "################################################################"
     }
  #}}}
+#DEVELOPEMENT {{{
+install_development_apps(){
+         package_remove "vim"
+         package_install "gvim ctags"
+         package_install "meld"
+         package_install "python3"
+         aur_package_install "android-sdk android-sdk-platform-tools android-sdk-build-tools android-platform"
+         package_install "android-tools android-udev libmtp"
+           add_user_to_group ${username} sdkusers
+           chown -R :sdkusers /opt/android-sdk/
+           chmod -R g+w /opt/android-sdk/
+           add_line "export ANDROID_HOME=/opt/android-sdk" "/home/${username}/.bashrc"
+           aur_package_install "android-studio"
+         package_install "intellij-idea-community-edition"
+         aur_package_install "jdk"
+         package_install "nodejs"
+         aur_package_install "visual-studio-code-bin"
+         aur_package_install "gitg"
+         aur_package_install "qgit"     
+         aur_package_install "kdiff3"
+         aur_package_install "regexxer"
+	 package_install "rustup"
+	 rustup install stable
+	 rustup install nightly && rustup default nightly
+}
+#}}}
 #OFFICE {{{
 install_office_apps(){
-          # if [[ ${KDE} -eq 1 ]]; then
-          #   package_install "calligra"
-          # else
-          #   package_install "gnumeric abiword abiword-plugins"
-          # fi
-          # package_install "hunspell hunspell-$LOCALE_HS"
-          # package_install "aspell aspell-$LOCALE_AS"
-          # package_install "calibre"
-          # package_install "gcstar"
-          # aur_package_install "geeknote-git"
-          # aur_package_install "haroopad"
-          # #package_install "homebank"
-          # package_install "impressive"
-          # package_install "texlive-most"
-          # if [[ ${KDE} -eq 0 ]]; then
-          #   package_install "gummi"
-          # fi
           print_title "LIBREOFFICE - https://wiki.archlinux.org/index.php/LibreOffice"
           package_install "libreoffice-fresh"
           [[ $LOCALE != en_US ]] && package_install "libreoffice-fresh-$LOCALE_LO"
@@ -1045,14 +957,12 @@ install_internet_apps(){
     print_title "INTERNET APPS"
             print_title "BROWSER"
             	  aur_package_install "google-chrome"
-                  package_install "chromium"
                   package_install "firefox firefox-i18n-$LOCALE_FF"
                   aur_package_install "vivaldi"
             print_title "DOWNLOAD|FILESHARE"
             	  aur_package_install "aerofs"
                   aur_package_install "rslsync"
                   package_install "deluge"
-                  aur_package_install "dropbox"
                   aur_package_install "flareget"
                   aur_package_install "jdownloader"
                   package_install "qbittorrent"
@@ -1080,15 +990,8 @@ install_internet_apps(){
 #GRAPHICS {{{
 install_graphics_apps(){
     print_title "GRAPHICS APPS"
-    	#package_install "blender"
     	package_install "gimp"
-    	#package_install "gthumb"
         package_install "inkscape python2-numpy python-lxml"
-        #package_install "mcomix"
-        #package_install "mypaint"
-        #aur_package_install "pencil"
-        #package_install "scribus"
-        #package_install "shotwell"
         package_install "simple-scan"
 }
 #}}}
@@ -1114,26 +1017,10 @@ install_audio_apps(){
             echo ""
             echo " b) BACK"
             echo ""
-                  #package_install "amarok"
                   package_install "audacious audacious-plugins"
                   package_install "ncmpcpp"
 		  aur_package_install "banshee"
-                  #package_install "clementine"
-                  #package_install "deadbeef"
-                  #aur_package_install "guayadeque"
-                  #aur_package_install "musique"
-                  #aur_package_install "nuvolaplayer-git"
-                  #package_install "pragha"
-                  #aur_package_install "radiotray"
-                  #package_install "rhythmbox grilo grilo-plugins libgpod libdmapsharing gnome-python python-mako"
-                  ##aur_package_install "pywebkitgtk"
-                  ## pywebkitgtk compile needed and take alot of time around 4-5H on i5-8gigram-ssd hdd
-                  ## + only need when Cannot activate "context pane" plugin
                   aur_package_install "spotify"
-                  #aur_package_install "timidity++ fluidr3"
-                  #echo -e 'soundfont /usr/share/soundfonts/fluidr3/FluidR3GM.SF2' >> /etc/timidity++/timidity.cfg
-                  #aur_package_install "tomahawk"
-                  #package_install "quodlibet"
 
 }
 #}}}
@@ -1142,13 +1029,7 @@ install_video_apps(){
     print_title "VIDEO APPS"
           #PLAYERS {{{
             print_title "VIDEO PLAYERS"
-                  #package_install "gnome-mplayer"
-                  #package_install "livestreamer"
-                  #package_install "minitube"
-                  #aur_package_install "miro"
-                  #package_install "mpv"
                   package_install "vlc"
-                  #[[ ${KDE} -eq 1 ]] && package_install "phonon-qt5-vlc"
                   package_install "kodi"
                   add_user_to_group ${username} kodi
                   package_install "obs-studio-git"
