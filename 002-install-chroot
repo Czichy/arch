@@ -108,7 +108,8 @@ use_all_cores(){
 language_selector(){
   #AUTOMATICALLY DETECTS THE SYSTEM LOCALE {{{
 #automatically detects the system language based on your locale
-  LOCALE=de_DE#`locale | grep LANG | sed 's/LANG=//' | cut -c1-5`
+  LOCALE=de_DE
+  #`locale | grep LANG | sed 's/LANG=//' | cut -c1-5`
   #KDE #{{{
     LOCALE_KDE=`echo $LOCALE | cut -d\_ -f1`
   #}}}
