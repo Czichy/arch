@@ -13,9 +13,9 @@ install_cloud_storage(){
   systemctl --user enable onedrive
   systemctl --user start onedrive
   onedrive
-  sudo pacman -Sy ..noconfirm java-openjfx
+  sudo pacman -Sy --noconfirm java-openjfx
   yaourt -S cryptomator
 }
 #}}}
 
-install_clod_storage
+install_cloud_storage

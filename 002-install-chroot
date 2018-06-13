@@ -610,19 +610,19 @@ install_nm_wicd(){
             package_install "volumeicon"
             package_install "w3m"
             package_install "xorg-xrandr"
-            package_install "xfce4-appfinder"
-            package_install "xfce4-notifyd"
-            package_install "xfce4-power-manager"
-            package_install "xfce4-settings"
-            package_install "xfce4-screenshooter"
-            package_install "xfce4-taskmanager"
-            package_install "dmenu"
+            #package_install "xfce4-appfinder"
+            #package_install "xfce4-notifyd"
+            #package_install "xfce4-power-manager"
+            #package_install "xfce4-settings"
+            #package_install "xfce4-screenshooter"
+            #package_install "xfce4-taskmanager"
+            #package_install "dmenu"
             package_install "feh"
             package_install "viewnior"
             package_install "gmrun"
             package_install "rxvt-unicode"
             aur_package_install "squeeze-git"
-            package_install "thunar tumbler"
+            #package_install "thunar tumbler"
             package_install "tint2"
             package_install "volwheel"
             package_install "xfburn"
@@ -886,17 +886,12 @@ install_system_apps(){
         package_install "netdata"
         system_ctl enable netdata.service
         package_install "nload"
-        package_install "gnome-logs"
-        package_install "gnome-disk-utility"
         package_install "polkit-gnome"
         package_install "qjournalctl"
         package_install "pacmanlogviewer"
         package_install "seahorse"
-        package_install "thunar"
         package_install "termite"
-        package_install "thunar-archive-plugin"
-        package_install "thunar-volman"
-	package_install "mc"
+	    package_install "mc"
 
         #sh AUR/install-caffeine-ng-v*.sh
         aur_package_install "conky-lua-archers"
@@ -957,7 +952,6 @@ install_office_apps(){
 install_internet_apps(){
     print_title "INTERNET APPS"
             print_title "BROWSER"
-            	  aur_package_install "google-chrome"
                   package_install "firefox firefox-i18n-$LOCALE_FF"
                   aur_package_install "vivaldi"
             print_title "DOWNLOAD|FILESHARE"
@@ -1000,27 +994,9 @@ install_graphics_apps(){
 install_audio_apps(){
     print_title "AUDIO APPS"
             print_title "AUDIO PLAYERS"
-            echo " 1) $(menu_item "amarok")"
-            echo " 2) $(menu_item "audacious")"
-            echo " 3) $(menu_item "banshee") $AUR"
-            echo " 4) $(menu_item "clementine")"
-            echo " 5) $(menu_item "deadbeef")"
-            echo " 6) $(menu_item "guayadeque") $AUR"
-            echo " 7) $(menu_item "musique") $AUR"
-            echo " 8) $(menu_item "nuvolaplayer-git") $AUR"
-            echo " 9) $(menu_item "pragha")"
-            echo "10) $(menu_item "radiotray") $AUR"
-            echo "11) $(menu_item "rhythmbox")"
-            echo "12) $(menu_item "spotify") $AUR"
-            echo "13) $(menu_item "timidity++") $AUR"
-            echo "14) $(menu_item "tomahawk") $AUR"
-            echo "15) $(menu_item "quodlibet")"
-            echo ""
-            echo " b) BACK"
-            echo ""
                   package_install "audacious audacious-plugins"
                   package_install "ncmpcpp"
-		  aur_package_install "banshee"
+		          aur_package_install "banshee"
                   aur_package_install "spotify"
 
 }
@@ -1204,20 +1180,20 @@ clean_orphan_packages(){
 #EXTRA {{{
 install_extra(){
     print_title "EXTRA"
-          aur_package_install "gtk2-appmenu gtk3-appmenu"
-          if [[ ${KDE} -eq 1 ]]; then
-            aur_package_install "appmenu-qt appmenu-gtk"
-            aur_package_install "kdeplasma-applets-menubar"
-          fi
-          if [[ ! -f /home/${username}/.config/gtk-3.0/settings.ini ]]; then
-            run_as_user "echo -e \"[Settings]\ngtk-shell-shows-menubar = 1\" > /home/${username}/.config/gtk-3.0/settings.ini"
-          else
-            add_line "gtk-shell-shows-menubar = 1" "/home/${username}/.config/gtk-3.0/settings.ini"
-          fi
-          aur_package_install "profile-sync-daemon"
-          run_as_user "psd"
-          run_as_user "$EDITOR /home/${username}/.config/psd/psd.conf"
-          run_as_user "systemctl --user enable psd.service"
+          #aur_package_install "gtk2-appmenu gtk3-appmenu"
+          #if [[ ${KDE} -eq 1 ]]; then
+          #  aur_package_install "appmenu-qt appmenu-gtk"
+          #  aur_package_install "kdeplasma-applets-menubar"
+          #fi
+          #if [[ ! -f /home/${username}/.config/gtk-3.0/settings.ini ]]; then
+          #  run_as_user "echo -e \"[Settings]\ngtk-shell-shows-menubar = 1\" > /home/${username}/.config/gtk-3.0/settings.ini"
+          #else
+          #  add_line "gtk-shell-shows-menubar = 1" "/home/${username}/.config/gtk-3.0/settings.ini"
+          #fi
+          #aur_package_install "profile-sync-daemon"
+          #run_as_user "psd"
+          #run_as_user "$EDITOR /home/${username}/.config/psd/psd.conf"
+          #run_as_user "systemctl --user enable psd.service"
 }
 #}}}
 #FINISH {{{
