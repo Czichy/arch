@@ -891,8 +891,8 @@ install_system_apps(){
         package_install "qjournalctl"
         package_install "pacmanlogviewer"
         #package_install "seahorse"
-        package_install "termite"
-	    package_install "mc"
+        #package_install "termite"
+	    package_install "ranger"
 
         #sh AUR/install-caffeine-ng-v*.sh
         aur_package_install "conky-lua-archers"
