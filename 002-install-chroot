@@ -580,7 +580,8 @@ install_nm_wicd(){
       if [[ ${KDE} -eq 1 ]]; then
         package_install "networkmanager dnsmasq plasma-nm networkmanager-qt"
       else
-        package_install "networkmanager dnsmasq network-manager-applet nm-connection-editor gnome-keyring"
+        package_install "networkmanager dnsmasq network-manager-applet nm-connection-editor"
+        #gnome-keyring"
       fi
       # vpn support
       package_install "networkmanager-openconnect networkmanager-openvpn networkmanager-pptp networkmanager-vpnc"
@@ -886,10 +887,10 @@ install_system_apps(){
         package_install "netdata"
         system_ctl enable netdata.service
         package_install "nload"
-        package_install "polkit-gnome"
+        #package_install "polkit-gnome"
         package_install "qjournalctl"
         package_install "pacmanlogviewer"
-        package_install "seahorse"
+        #package_install "seahorse"
         package_install "termite"
 	    package_install "mc"
 
@@ -996,7 +997,7 @@ install_audio_apps(){
             print_title "AUDIO PLAYERS"
                   package_install "audacious audacious-plugins"
                   package_install "ncmpcpp"
-		          aur_package_install "banshee"
+		          #aur_package_install "banshee"
                   aur_package_install "spotify"
 
 }
