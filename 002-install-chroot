@@ -600,14 +600,14 @@ install_nm_wicd(){
       print_title "$1 ESSENTIAL APPS"
             #install_display_manager
             package_install "arandr"
-            package_install "awesome-terminal-fonts"
+            #package_install "awesome-terminal-fonts"
             package_install "imagemagick"
             package_install "compton"
-            package_install "lxappearance"
+            #package_install "lxappearance"
             package_install "lxrandr"
             package_install "nitrogen"
             package_install "rofi"
-            package_install "slim"
+            #package_install "slim"
             package_install "volumeicon"
             package_install "w3m"
             package_install "xorg-xrandr"
@@ -620,18 +620,18 @@ install_nm_wicd(){
             #package_install "dmenu"
             package_install "feh"
             package_install "viewnior"
-            package_install "gmrun"
+            #package_install "gmrun"
             package_install "rxvt-unicode"
             aur_package_install "squeeze-git"
             #package_install "thunar tumbler"
-            package_install "tint2"
+            #package_install "tint2"
             package_install "volwheel"
             package_install "xfburn"
             package_install "xcompmgr transset-df"
             package_install "zathura"
             package_install "speedtest-cli"
             aur_package_install "yad"
-	    aur_package_install "skippy-xd-git"
+	   # aur_package_install "skippy-xd-git"
   } #}}}
 
 install_display_manager() { #{{{
@@ -888,7 +888,7 @@ install_system_apps(){
         system_ctl enable netdata.service
         package_install "nload"
         #package_install "polkit-gnome"
-        package_install "qjournalctl"
+        package_install "journalctl"
         package_install "pacmanlogviewer"
         #package_install "seahorse"
         #package_install "termite"
@@ -896,7 +896,7 @@ install_system_apps(){
 
         #sh AUR/install-caffeine-ng-v*.sh
         aur_package_install "conky-lua-archers"
-        aur_package_install "discord"
+        #aur_package_install "discord"
         aur_package_install "mintstick-git"
         aur_package_install "temps"
 	package_install "cmake freetype2 fontconfig pkg-config make xclip"
