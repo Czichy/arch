@@ -859,6 +859,9 @@ install_system_apps(){
         is_package_installed "firewalld" && package_remove "firewalld"
         package_install "firewalld"
         system_ctl enable firewalld
+        package_install "cronie"
+        system_ctl enable cronie
+        aur_package_install "grub-btrfs snap-pac-grub snap-pac"
         package_install "gparted"
         package_install "grsync"
         aur_package_install "hosts-update"
