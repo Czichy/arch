@@ -863,8 +863,8 @@ install_system_apps(){
         system_ctl enable cronie
         package_install "xf86-input-synaptics"
         aur_package_install "grub-btrfs snap-pac-grub snap-pac"
-        package_install "gparted"
-        package_install "grsync"
+        #package_install "gparted"
+        #package_install "grsync"
         aur_package_install "hosts-update"
         hosts-update
         package_install "htop"
@@ -898,7 +898,7 @@ install_system_apps(){
         #package_install "termite"
 	    package_install "ranger"
 	    package_install "pacman-contrib"
-
+        package_install "cdrtools"
         #sh AUR/install-caffeine-ng-v*.sh
         aur_package_install "conky-lua-archers"
         #aur_package_install "discord"
@@ -917,7 +917,8 @@ install_system_apps(){
 #DEVELOPEMENT {{{
 install_development_apps(){
          package_remove "vim"
-         package_install "gvim ctags"
+         package_install "neovim"
+         curl -sLf https://spacevim.org/install.sh | bash -s -- --install neovim
          package_install "meld"
          package_install "python3"
          aur_package_install "android-sdk android-sdk-platform-tools android-sdk-build-tools android-platform"
@@ -932,12 +933,13 @@ install_development_apps(){
          package_install "nodejs"
          aur_package_install "visual-studio-code-bin"
          aur_package_install "gitg"
-         aur_package_install "qgit"     
+         aur_package_install "qgit"
          aur_package_install "kdiff3"
          aur_package_install "regexxer"
 	 package_install "rustup"
 	 rustup install stable
 	 rustup install nightly && rustup default nightly
+   rustup component add rls-preview rust-analysis rust-src
 }
 #}}}
 #OFFICE {{{
@@ -1023,18 +1025,16 @@ install_video_apps(){
 install_themes(){
   aur_package_install "neofetch"
   aur_package_install "screenkey"
-  aur_package_install "vim-gruvbox-git vim-airline-gruvbox-git"
 
   #fonts
   aur_package_install "ttf-fantasque-sans-git"
-  
+
   aur_package_install "ttf-font-awesome"
   aur_package_install "ttf-mac-fonts"
   aur_package_install "otf-fira-code"
   aur_package_install "virtualbox-for-linux-kernel"
   aur_package_install "xcursor-breeze"
 
-  aur_package_install "vim-apprentice"
 # these come last always
   aur_package_install "hardcode-fixer-git"
   sudo hardcode-fixer
