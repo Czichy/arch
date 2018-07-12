@@ -24,23 +24,6 @@ else
   echo "missing file: sharedfuncs.sh"
   exit 1
 fi
-#set -e
-#load_script "000-use-all-cores-makepkg-conf.sh"
-#load_script "100-display-manager-and-desktop.sh"
-#load_script "110-install-sound.sh"
-#load_script "130-install-printers.sh"
-#load_script "140-install-samba.sh"
-## install apps
-#load_script "200-install-system-tools.sh"
-#load_script "201-install-development-apps.sh"
-#load_script "202-install-internet-apps.sh"
-#load_script "203-install-accessories-apps.sh"
-#
-#load_script "300-install-themes.sh"
-##load_script "400-install-cloud-storage.sh"
-##load_script "600-install-Arco.sh"
-#load_script "700-install-fonts.sh"
-#
 #ARCHLINUX U INSTALL {{{
 #1 - WELCOME {{{
 welcome(){
@@ -216,21 +199,8 @@ choose_aurhelper(){
   print_title "AUR HELPER - https://wiki.archlinux.org/index.php/AUR_Helpers"
   print_info "AUR Helpers are written to make using the Arch User Repository more comfortable."
   print_warning "\tNone of these tools are officially supported by Arch devs."
-        print_title "YAOURT - https://wiki.archlinux.org/index.php/Yaourt"
-        print_info "Yaourt (Yet AnOther User Repository Tool) is a community-contributed wrapper for pacman which adds seamless access to the AUR, allowing and automating package compilation and installation from your choice of the thousands of PKGBUILDs in the AUR, in addition to the many thousands of available Arch Linux binary packages."
-        use_all_cores
-        if ! is_package_installed "yaourt" ; then
-          package_install "base-devel yajl namcap"
-          pacman -D --asdeps yajl namcap
-          aui_download_packages "package-query yaourt"
-          pacman -D --asdeps package-query
-          if ! is_package_installed "yaourt" ; then
-            echo "Yaourt not installed. EXIT now"
-            pause_function
-            exit 0
-          fi
-        fi
-        AUR_PKG_MANAGER="yaourt --tmp /var/tmp/"
+  git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg -si
+  AUR_PKG_MANAGER="trizen"
 }
 #}}}
 #CUSTOM REPOSITORIES {{{
