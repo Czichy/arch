@@ -129,7 +129,7 @@ sudo pacman -S --noconfirm --needed \
      ttf-symbola
 
 trizen -S --noconfirm --needed \
-     ttf-font-awesome \
+     ttf-font-awesome-4 \
      otf-fira-code
 
 echo "Installing basic tools"
@@ -193,7 +193,7 @@ echo "Docker"
 sudo pacman -S --noconfirm --needed \
      docker \
      docker-compose
-                                      
+
 echo "Installing editors"
 sudo pacman -S --noconfirm --needed \
      emacs \
@@ -225,8 +225,9 @@ trizen -S --noconfirm --needed \
 echo "Installing i3/sway"
 sudo pacman -S --noconfirm --needed \
      i3-wm \
-     i3lock \
+#     i3lock \
 #     i3status \
+     rofi \
      sway \
      rxvt-unicode
 
