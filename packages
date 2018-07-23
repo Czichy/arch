@@ -1,0 +1,340 @@
+#!/bin/sh
+CMD ="$1"
+echo "Updating repos"
+sudo pacman -Syu --noconfirm
+
+
+#use_all_cores
+  numberofcores=$(grep -c ^processor /proc/cpuinfo)
+
+  case $numberofcores in
+
+      8)
+          echo "You have " $numberofcores" cores."
+          echo "Changing the makeflags for "$numberofcores" cores."
+          sudo sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j9"/g' /etc/makepkg.conf
+          echo "Changing the compression settings for "$numberofcores" cores."
+          sudo sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T 8 -z -)/g' /etc/makepkg.conf
+          ;;
+      4)
+          echo "You have " $numberofcores" cores."
+          echo "Changing the makeflags for "$numberofcores" cores."
+          sudo sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j5"/g' /etc/makepkg.conf
+          echo "Changing the compression settings for "$numberofcores" cores."
+          sudo sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T 4 -z -)/g' /etc/makepkg.conf
+          ;;
+      2)
+          echo "You have " $numberofcores" cores."
+          echo "Changing the makeflags for "$numberofcores" cores."
+          sudo sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j3"/g' /etc/makepkg.conf
+          echo "Changing the compression settings for "$numberofcores" cores."
+          sudo sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T 2 -z -)/g' /etc/makepkg.conf
+          ;;
+      *)
+          echo "We do not know how many cores you have."
+          echo "Do it manually."
+          ;;
+
+  esac
+
+  echo "###  All cores will be used during building and compression ####"
+
+# trizen-bin dependency
+sudo pacman -S --noconfirm --needed curl
+
+echo "Installing trizen"
+    cd /tmp
+    echo Y | git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg -si
+    cd -
+    cd -
+                                  :
+trizen -Suy --noconfirm
+
+if [[ "$1" == "-u" ]]; then
+echo "SELECT/CREATE USER"
+    read -p "Username: " username
+    username=`echo $username | tr '[:upper:]' '[:lower:]'`
+    useradd -m -g users -G wheel -s /bin/bash ${username}
+    chfn ${username}
+    passwd ${username}
+    while [[ $? -ne 0 ]]; do
+      passwd ${username}
+    done
+    cp /etc/skel/.bashrc /home/${username}
+    chown -R ${username}:users /home/${username}
+    print_title "SUDO - https://wiki.archlinux.org/index.php/Sudo"
+    sudo pacman -S --noconfirm --needed sudo
+  #CONFIGURE SUDOERS {{{
+  if [[ ! -f  /etc/sudoers.aui ]]; then
+    cp -v /etc/sudoers /etc/sudoers.aui
+    ## Uncomment to allow members of group wheel to execute any command
+    sed -i '/%wheel ALL=(ALL) ALL/s/^#//' /etc/sudoers
+    ## Same thing without a password (not secure)
+    #sed -i '/%wheel ALL=(ALL) NOPASSWD: ALL/s/^#//' /etc/sudoers
+
+    #This config is especially helpful for those using terminal multiplexers like screen, tmux, or ratpoison, and those using sudo from scripts/cronjobs:
+    echo "" >> /etc/sudoers
+    echo 'Defaults !requiretty, !tty_tickets, !umask' >> /etc/sudoers
+    echo 'Defaults visiblepw, path_info, insults, lecture=always' >> /etc/sudoers
+    echo 'Defaults loglinelen=0, logfile =/var/log/sudo.log, log_year, log_host, syslog=auth' >> /etc/sudoers
+    echo 'Defaults passwd_tries=3, passwd_timeout=1' >> /etc/sudoers
+    echo 'Defaults env_reset, always_set_home, set_home, set_logname' >> /etc/sudoers
+    echo 'Defaults !env_editor, editor="/usr/bin/vim:/usr/bin/vi:/usr/bin/nano"' >> /etc/sudoers
+    echo 'Defaults timestamp_timeout=15' >> /etc/sudoers
+    echo 'Defaults passprompt="[sudo] password for %u: "' >> /etc/sudoers
+    echo 'Defaults lecture=never' >> /etc/sudoers
+  fi
+fi
+
+echo "Installing basic packages"
+sudo pacman -S --noconfirm --needed \
+     xorg-server \
+     xorg-xinit xorg-xrdb xorg-xmodmap xf86-input-libinput \
+     slim \
+     systemd \
+     systemd-arch-units \
+     openssh \
+     sysstat
+
+echo "Installing wireless packages"
+sudo pacman -S --noconfirm --needed \
+     wpa_supplicant \
+     netctl \
+     networkmanager \
+     network-manager-applet
+
+echo "Installing sound packages"
+sudo pacman -S --noconfirm --needed \
+     pulseaudio \
+     pavucontrol
+
+echo "Installing cups"
+sudo pacman -S --noconfirm --needed \
+      cups \
+      cups-pdf \
+      ghostscript \
+      gsfonts \
+      gutenprint \
+      gtk3-print-backends \
+      libcups \
+      hplip \
+      system-config-printer
+
+
+echo "Installing fonts"
+sudo pacman -S --noconfirm --needed \
+     ttf-dejavu \
+     terminus-font \
+     ttf-symbola
+
+trizen -S --noconfirm --needed \
+     ttf-font-awesome \
+     otf-fira-code
+
+echo "Installing basic tools"
+sudo pacman -S --noconfirm --needed \
+     rsync \
+     ntp \
+     ripgrep \
+     xsel \
+     unzip \
+     unrar \
+     imagemagick \
+     bash-completion \
+     alsa-utils \
+     redshift \
+     firewalld \
+     cronie \
+     xf86-input-synaptics \
+     git \
+     neofetch \
+     screenkey
+
+
+echo "Installing zsh"
+sudo pacman -S --noconfirm --needed \
+    zsh \
+    zsh-autosuggestions
+trizen -S --noconfirm --needed \
+    antigen-git
+    spaceship-prompt-git \
+    prezto-git \
+    fzf
+
+echo "Installing development tools"
+sudo pacman -S --noconfirm --needed \
+     base-devel \
+     bpython2
+
+trizen -S --noconfirm --needed \
+     ngrok \
+     rbenv ruby-build \
+     android-sdk-platform-tools
+
+echo "Installing languages"
+sudo pacman -S --noconfirm --needed \
+     ruby \
+     python \
+     python2 \
+     nodejs \
+     go \
+     elixir \
+     rustup
+
+echo "Preparing Rust language"
+rustup install stable
+rustup install nighly
+rustup component add rustfmt-preview
+rustup component add clippy-preview
+cargo +nightly install racer -q
+
+echo "Docker"
+sudo pacman -S --noconfirm --needed \
+     docker \
+     docker-compose
+                                      
+echo "Installing editors"
+sudo pacman -S --noconfirm --needed \
+     emacs \
+     aspell-de \
+     aspell-en \
+     nvim
+
+curl -sLf https://spacevim.org/install.sh | bash -s -- --install neovim
+
+echo "Installing snapper"
+trizen -S --noconfirm --needed \
+      grub-btrfs \
+      snap-pac-grub \
+      snap-pac
+
+#echo "Installing xfce4"
+#sudo pacman -S --noconfirm --needed \
+#     xfce4 \
+#     xfce4-goodies \
+#     mupdf \
+#     file-roller \
+#     gvfs
+
+#trizen -S --noconfirm --needed \
+#     sardi-icons \
+#     xfwm-axiom-theme \
+#     xfce4-hardware-monitor-plugin
+
+echo "Installing i3/sway"
+sudo pacman -S --noconfirm --needed \
+     i3-wm \
+     i3lock \
+#     i3status \
+     sway \
+     rxvt-unicode
+
+trizen -S --noconfirm --needed \
+      i3blocks \
+      i3status-rust
+
+echo "Installing common software"
+sudo pacman -S --noconfirm --needed \
+     gimp \
+     inkscape \
+     pidgin \
+     texlive-bin \
+     dos2unix \
+     shotwell \
+     tmux \
+     keybase \
+     transmission \
+     keepassxc
+
+trizen -S --noconfirm --needed \
+     #tmate \
+     onedrive \
+     #forticlientsslvpn \
+     gdrive \
+     alacritty-git \
+     cryptomator
+
+echo "Installing video software"
+sudo pacman -S --noconfirm --needed \
+     vlc \
+     obs-studio \
+     stremio-bin
+
+echo "Installing audio software"
+sudo pacman -S --noconfirm --needed \
+     ncmpcpp
+
+trizen -S --noconfirm --needed \
+     spotify
+
+#echo "Installing entretainment software"
+#sudo pacman -S --noconfirm --needed steam
+
+echo "Installing browsers"
+sudo pacman -S --noconfirm --needed firefox
+
+echo "Installing productivity related software"
+trizen -S  --noconfirm --needed \
+     rescuetime \
+     toggldesktop-bin
+
+echo "Installing kernel flavors"
+sudo pacman -S --noconfirm --needed linux-zen
+
+echo "Laptop improvements"
+sudo pacman -S --noconfirm --needed \
+     acpid \
+     tlp
+
+echo "Install virtualization software"
+sudo pacman -S --noconfirm --needed virtualbox
+
+echo "Installing SSH"
+sudo pacman -S --noconfirm --needed openssh
+    [[ ! -f /etc/ssh/sshd_config.aui ]] && cp -v /etc/ssh/sshd_config /etc/ssh/sshd_config.aui;
+    #CONFIGURE SSHD_CONF #{{{
+      sed -i '/Port 22/s/^#//' /etc/ssh/sshd_config
+      sed -i '/Protocol 2/s/^#//' /etc/ssh/sshd_config
+      sed -i '/HostKey \/etc\/ssh\/ssh_host_rsa_key/s/^#//' /etc/ssh/sshd_config
+      sed -i '/HostKey \/etc\/ssh\/ssh_host_dsa_key/s/^#//' /etc/ssh/sshd_config
+      sed -i '/HostKey \/etc\/ssh\/ssh_host_ecdsa_key/s/^#//' /etc/ssh/sshd_config
+      sed -i '/KeyRegenerationInterval/s/^#//' /etc/ssh/sshd_config
+      sed -i '/ServerKeyBits/s/^#//' /etc/ssh/sshd_config
+      sed -i '/SyslogFacility/s/^#//' /etc/ssh/sshd_config
+      sed -i '/LogLevel/s/^#//' /etc/ssh/sshd_config
+      sed -i '/LoginGraceTime/s/^#//' /etc/ssh/sshd_config
+      sed -i '/PermitRootLogin/s/^#//' /etc/ssh/sshd_config
+      sed -i '/HostbasedAuthentication no/s/^#//' /etc/ssh/sshd_config
+      sed -i '/StrictModes/s/^#//' /etc/ssh/sshd_config
+      sed -i '/RSAAuthentication/s/^#//' /etc/ssh/sshd_config
+      sed -i '/PubkeyAuthentication/s/^#//' /etc/ssh/sshd_config
+      sed -i '/IgnoreRhosts/s/^#//' /etc/ssh/sshd_config
+      sed -i '/PermitEmptyPasswords/s/^#//' /etc/ssh/sshd_config
+      sed -i '/AllowTcpForwarding/s/^#//' /etc/ssh/sshd_config
+      sed -i '/AllowTcpForwarding no/d' /etc/ssh/sshd_config
+      sed -i '/X11Forwarding/s/^#//' /etc/ssh/sshd_config
+      sed -i '/X11Forwarding/s/no/yes/' /etc/ssh/sshd_config
+      sed -i -e '/\tX11Forwarding yes/d' /etc/ssh/sshd_config
+      sed -i '/X11DisplayOffset/s/^#//' /etc/ssh/sshd_config
+      sed -i '/X11UseLocalhost/s/^#//' /etc/ssh/sshd_config
+      sed -i '/PrintMotd/s/^#//' /etc/ssh/sshd_config
+      sed -i '/PrintMotd/s/yes/no/' /etc/ssh/sshd_config
+      sed -i '/PrintLastLog/s/^#//' /etc/ssh/sshd_config
+      sed -i '/TCPKeepAlive/s/^#//' /etc/ssh/sshd_config
+      sed -i '/the setting of/s/^/#/' /etc/ssh/sshd_config
+      sed -i '/RhostsRSAAuthentication and HostbasedAuthentication/s/^/#/' /etc/ssh/sshd_config
+
+      echo "Activate needed services"
+sudo systemctl enable ntpd.service
+sudo systemctl enable slim.service
+sudo systemctl enable NetworkManager.service
+sudo systemctl enable acpid.service
+sudo systemctl enable nscd.service
+sudo systemctl enable firewalld
+sudo systemctl enable cronie
+sudo systemctl enable tlp
+sudo systemctl enable tlp-sleep
+sudo systemctl enable sshd
+sudo systemctl enable org.cups.cupsd.service
+sudo mkinitcpio -p linux
+exit 0
