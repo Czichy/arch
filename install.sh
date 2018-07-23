@@ -28,6 +28,7 @@ mount -o noatime,ssd,compress=lzo,space_cache=v2,subvol=@log /dev/sdb2 /mnt/var/
 mount -o noatime,ssd,compress=lzo,space_cache=v2,subvol=@pkg /dev/sdb2 /mnt/var/cache/pacman/pkg
 mount -o noatime,ssd,compress=lzo,space_cache=v2,subvolid=5 /dev/sdb2 /mnt/btrfs
 mount /dev/sdb128 /mnt/boot
+mount /dev/sda1 /mnt/home
 swapon /dev/sdb1
 df -Th
 
