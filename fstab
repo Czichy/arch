@@ -1,18 +1,22 @@
-# Static information about the filesystems.
-# See fstab(5) for details.
+# /dev/sdb2 UUID=bc1f41b8-3c3e-431c-a710-5dc05c8b6dac LABEL=arch
+PARTUUID=0c4ed281-4044-4b23-b063-e3ed9967cdb2	/         	btrfs     	rw,noatime,compress=lzo,ssd,space_cache=v2,subvolid=257,subvol=/@,subvol=@	0 0
 
-# <file system> <dir> <type> <options> <dump> <pass>
-# /dev/sdb2 UUID=af107153-92bf-42e1-b6ed-a7899c338b35
-PARTUUID=ab9af0ea-da4c-4d31-860b-8301f018a1c7	/         	ext4      	rw,relatime,data=ordered	0 1
+# /dev/sda1 UUID=f8218401-54ab-4972-9a52-ec1536eb9bed
+#PARTUUID=88a33d02-8c2f-4d65-acda-eff2d0cae4c9	/home     	ext4      	nodev,nosuid	0 2
+/dev/sda1 /home ext4 nodev,nosuid 0 2
 
-# /dev/sdb128 UUID=F47C-3821
-PARTUUID=946086ed-5add-4a3f-bce5-046da8469287	/boot     	vfat      	rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro	0 2
+# /dev/sdb2 UUID=bc1f41b8-3c3e-431c-a710-5dc05c8b6dac LABEL=arch
+PARTUUID=0c4ed281-4044-4b23-b063-e3ed9967cdb2	/.snapshots	btrfs     	rw,noatime,compress=lzo,ssd,space_cache=v2,subvolid=260,subvol=/@snapshots,subvol=@snapshots	0 0
 
-# /dev/sdb1 UUID=a3cea246-bb23-4164-8e28-a84e50d02aed
-PARTUUID=2828e35d-0e52-441f-a95d-ec86d9028a06	none      	swap      	defaults,pri=-2	0 0
+# /dev/sdb2 UUID=bc1f41b8-3c3e-431c-a710-5dc05c8b6dac LABEL=arch
+PARTUUID=0c4ed281-4044-4b23-b063-e3ed9967cdb2	/var/log  	btrfs     	rw,noatime,compress=lzo,ssd,space_cache=v2,subvolid=259,subvol=/@log,subvol=@log	0 0
 
-#/dev/sda2
-UUID=2aa8b25c-2372-4756-bfc4-73271b3afee3	/home		ext4		nodev,nosuid	0	2
+# /dev/sdb2 UUID=bc1f41b8-3c3e-431c-a710-5dc05c8b6dac LABEL=arch
+PARTUUID=0c4ed281-4044-4b23-b063-e3ed9967cdb2	/var/cache/pacman/pkg	btrfs     	rw,noatime,compress=lzo,ssd,space_cache=v2,subvolid=258,subvol=/@pkg,subvol=@pkg	0 0
 
-#/dev/disk/by-uuid/E48C7E9A8C7E6748 /home/czichy/Data auto nosuid,nodev,nofail,x-gvfs-show 0 0
-/dev/disk/by-uuid/7272A86472A82EB3 /home/czichy/Programming auto nosuid,nodev,nofail,x-gvfs-show 0 0
+# /dev/sdb2 UUID=bc1f41b8-3c3e-431c-a710-5dc05c8b6dac LABEL=arch
+PARTUUID=0c4ed281-4044-4b23-b063-e3ed9967cdb2	/btrfs    	btrfs     	rw,noatime,compress=lzo,ssd,space_cache=v2,subvolid=5,subvol=/	0 0
+
+# /dev/sdb128 UUID=6058-CF81
+PARTUUID=8ff9fd3e-a056-47cf-b86c-1fb9ae286d94	/boot     	vfat      	rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro	0 2
+
