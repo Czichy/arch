@@ -1,4 +1,5 @@
-#!/bin/sh
+##!/bin/sh
+#!/usr/bin/env bash
 CMD ="$1"
 echo "Updating repos"
 sudo pacman -Syu --noconfirm
