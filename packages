@@ -246,12 +246,11 @@ sudo pacman -S --noconfirm --needed \
      tmux \
      keybase \
      transmission \
-     keepassxc
+     keepassxc \
+     sqlite \
+     dmd
 
 trizen -S --noconfirm --needed \
-     #tmate \
-     onedrive \
-     #forticlientsslvpn \
      gdrive \
      alacritty-git \
      cryptomator
