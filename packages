@@ -181,7 +181,8 @@ sudo pacman -S --noconfirm --needed \
      nodejs \
      go \
      elixir \
-     rustup
+     rustup \
+     java-openjfx
 
 echo "Preparing Rust language"
 rustup install stable
@@ -248,11 +249,15 @@ sudo pacman -S --noconfirm --needed \
      keybase \
      transmission \
      keepassxc \
+     libreoffice \
+     R
 
 trizen -S --noconfirm --needed \
      gdrive \
      alacritty-git \
-     cryptomator
+     cryptomator \
+     davfs2 \
+     sc-im
 
 echo "Installing OneDrive"
 sudo pacman -S --noconfirm --needed \

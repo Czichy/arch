@@ -20,3 +20,4 @@ PARTUUID=0c4ed281-4044-4b23-b063-e3ed9967cdb2	/btrfs    	btrfs     	rw,noatime,c
 # /dev/sdb128 UUID=6058-CF81
 PARTUUID=8ff9fd3e-a056-47cf-b86c-1fb9ae286d94	/boot     	vfat      	rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro	0 2
 
+http://localhost:42427/HsabNeBtQzKu/Home /home/czichy/webdav davfs user,noauto,uid=czichy,file_mode=600,dir_mode=700 0 1
