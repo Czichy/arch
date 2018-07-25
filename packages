@@ -1,6 +1,8 @@
 ##!/bin/sh
 #!/usr/bin/env bash
 CMD=$1
+installdir=$(pwd)
+
 echo "Updating repos"
 sudo pacman -Syu --noconfirm
 
@@ -46,10 +48,9 @@ sudo pacman -S --noconfirm --needed curl
 echo "Installing trizen"
     cd /tmp
     echo Y | git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg -si
-    cd -
-    cd -
-                                  :
-trizen -Suy --noconfirm
+    cd $installdir
+
+    trizen -Suy --noconfirm
 
 if [[ "$1" == "-u" ]]; then
 echo "SELECT/CREATE USER"
