@@ -248,13 +248,26 @@ sudo pacman -S --noconfirm --needed \
      keybase \
      transmission \
      keepassxc \
-     sqlite \
-     dmd
 
 trizen -S --noconfirm --needed \
      gdrive \
      alacritty-git \
      cryptomator
+
+echo "Installing OneDrive"
+sudo pacman -S --noconfirm --needed \
+     sqlite \
+     dmd
+
+     cd /tmp
+     git clone https://github.com/abraunegg/onedrive.git
+     cd onedrive
+     make
+     sudo make install
+     cd ..
+     rm -r -f /onedrive
+     cd $installdir
+
 
 echo "Installing video software"
 sudo pacman -S --noconfirm --needed \
