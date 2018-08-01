@@ -56,7 +56,7 @@ if [[ "$1" == "-u" ]]; then
 echo "SELECT/CREATE USER"
     read -p "Username: " username
     username=`echo $username | tr '[:upper:]' '[:lower:]'`
-    useradd -m -g users -G wheel -s /bin/bash ${username}
+    useradd -m -g users -G wheel,network -s /bin/bash ${username}
     chfn ${username}
     passwd ${username}
     while [[ $? -ne 0 ]]; do
@@ -92,9 +92,7 @@ echo "Installing basic packages"
 sudo pacman -S --noconfirm --needed \
      xorg-server \
      xorg-xinit xorg-xrdb xorg-xmodmap xf86-input-libinput \
-     slim \
      systemd \
-     systemd-arch-units \
      openssh \
      sysstat
 
@@ -150,7 +148,7 @@ sudo pacman -S --noconfirm --needed \
      xf86-input-synaptics \
      git \
      neofetch \
-     screenkey
+trizen -S --noconfirm --needed screenkey
 
 
 echo "Installing zsh"
@@ -162,6 +160,11 @@ trizen -S --noconfirm --needed \
     spaceship-prompt-git \
     prezto-git \
     fzf
+
+    # Set the default shell to zsh if it isn't currently set to zsh
+    if [[ ! $(echo $SHELL) == $(which zsh) ]]; then
+        chsh -s $(which zsh)
+    fi
 
 echo "Installing development tools"
 sudo pacman -S --noconfirm --needed \
@@ -185,7 +188,7 @@ sudo pacman -S --noconfirm --needed \
      java-openjfx
 
 echo "Preparing Rust language"
-rustup install stable
+rustup install stable && rustup default stable
 rustup install nightly
 rustup component add rustfmt-preview
 rustup component add clippy-preview
@@ -201,14 +204,13 @@ sudo pacman -S --noconfirm --needed \
      emacs \
      aspell-de \
      aspell-en \
-     nvim
+     neovim
 
-curl -sLf https://spacevim.org/install.sh | bash -s -- --install neovim
+#curl -sLf https://spacevim.org/install.sh | bash -s -- --install neovim
 
 echo "Installing snapper"
 trizen -S --noconfirm --needed \
-      grub-btrfs \
-      snap-pac-grub \
+      snapper \
       snap-pac
 
 #echo "Installing xfce4"
@@ -226,14 +228,17 @@ trizen -S --noconfirm --needed \
 
 echo "Installing i3/sway"
 sudo pacman -S --noconfirm --needed \
-     i3-wm \
-#     i3lock \
-#     i3status \
      rofi \
      sway \
-     rxvt-unicode
+     rxvt-unicode \
+     volumeicon \
+     speedtest-cli \
+     feh \
+     arandr \
+     xorg-xrandr
 
 trizen -S --noconfirm --needed \
+      i3-gaps \
       i3blocks \
       i3status-rust
 
@@ -247,13 +252,12 @@ sudo pacman -S --noconfirm --needed \
      shotwell \
      tmux \
      keybase \
-     transmission \
+#transmission \
      keepassxc \
-     libreoffice \
+     libreoffice-fresh-de_DE \
      R
 
 trizen -S --noconfirm --needed \
-     gdrive \
      alacritty-git \
      cryptomator \
      davfs2 \
@@ -346,15 +350,14 @@ sudo pacman -S --noconfirm --needed openssh
 
       echo "Activate needed services"
 sudo systemctl enable ntpd.service
-sudo systemctl enable slim.service
 sudo systemctl enable NetworkManager.service
 sudo systemctl enable acpid.service
 sudo systemctl enable nscd.service
-sudo systemctl enable firewalld
-sudo systemctl enable cronie
-sudo systemctl enable tlp
-sudo systemctl enable tlp-sleep
-sudo systemctl enable sshd
+sudo systemctl enable firewalld.service
+sudo systemctl enable cronie.service
+sudo systemctl enable tlp.service
+sudo systemctl enable tlp-sleep.service
+sudo systemctl enable sshd.service
 sudo systemctl enable org.cups.cupsd.service
 sudo mkinitcpio -p linux
 exit 0
