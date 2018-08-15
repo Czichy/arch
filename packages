@@ -104,6 +104,7 @@ sudo pacman -S --noconfirm --needed \
      network-manager-applet
 
 echo "Installing sound packages"
+mv ~/.config/pulse ~/.config/pulse-backup -f
 sudo pacman -S --noconfirm --needed \
      pulseaudio \
      pavucontrol
@@ -148,8 +149,13 @@ sudo pacman -S --noconfirm --needed \
      xf86-input-synaptics \
      git \
      neofetch \
+     htop
+
 trizen -S --noconfirm --needed screenkey
 
+echo "Installing Samba"
+sudo pacman -S --noconfirm --needed \
+    cifs-utils
 
 echo "Installing zsh"
 sudo pacman -S --noconfirm --needed \
@@ -229,12 +235,10 @@ trizen -S --noconfirm --needed \
 echo "Installing i3/sway"
 sudo pacman -S --noconfirm --needed \
      rofi \
-     sway \
      rxvt-unicode \
      volumeicon \
      speedtest-cli \
      feh \
-     arandr \
      xorg-xrandr
 
 trizen -S --noconfirm --needed \
@@ -254,12 +258,13 @@ sudo pacman -S --noconfirm --needed \
      keybase \
 #transmission \
      keepassxc \
-     libreoffice-fresh-de_DE \
-     R
+     libreoffice-fresh \
+     libreoffice-fresh-de \
+     r
 
 trizen -S --noconfirm --needed \
      alacritty-git \
-     cryptomator \
+#     cryptomator \
      davfs2 \
      sc-im
 
